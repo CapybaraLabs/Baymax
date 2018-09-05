@@ -40,8 +40,7 @@ public class UserDialogue {
 
         this.messagesToCleanUp.add(event.getMessageIdLong());
 
-        Node root = model.get("root");
-        sendNode(root);
+        parseUserInput(event, model.get("root"));
     }
 
     public void done() {
@@ -99,7 +98,7 @@ public class UserDialogue {
                         && event.getChannel().getIdLong() == this.channelId;
     }
 
-    private Message asMessage(Node node) {
+    public static Message asMessage(Node node) {
         MessageBuilder mb = new MessageBuilder();
 
         mb.append("**").append(node.getTitle()).append("**\n\n");
@@ -115,7 +114,7 @@ public class UserDialogue {
         return mb.build();
     }
 
-    private String numberAsEmojis(int number) {
+    private static String numberAsEmojis(int number) {
         String numberAsString = Integer.toString(number);
         return numberAsString.chars()
                 .mapToObj(c -> digitToEmoji((char) c))
@@ -123,7 +122,7 @@ public class UserDialogue {
                 .toString();
     }
 
-    private String digitToEmoji(char digit) {
+    private static String digitToEmoji(char digit) {
         switch (digit) {
             case '0':
                 return Emojis.get("zero");
