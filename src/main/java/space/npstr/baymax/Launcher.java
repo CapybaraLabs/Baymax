@@ -1,5 +1,6 @@
 package space.npstr.baymax;
 
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDAInfo;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -10,9 +11,13 @@ import org.springframework.boot.context.event.ApplicationFailedEvent;
 import space.npstr.baymax.info.AppInfo;
 import space.npstr.baymax.info.GitRepoState;
 
+import javax.annotation.PreDestroy;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by napster on 05.09.18.
@@ -21,6 +26,10 @@ import java.time.format.DateTimeFormatter;
 public class Launcher implements ApplicationRunner {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Launcher.class);
+
+    private final Thread shutdownHook;
+    private volatile boolean shutdownHookAdded = false;
+    private volatile boolean shutdownHookExecuted = false;
 
     public static void main(String[] args) {
         //just post the info to the console
@@ -52,9 +61,78 @@ public class Launcher implements ApplicationRunner {
         app.run(args);
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public Launcher(ShardManager shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
+        this.shutdownHook = new Thread(() -> {
+            try {
+                shutdown(shardManager, jdaThreadPool);
+            } catch (Exception e) {
+                log.error("Uncaught exception in shutdown hook", e);
+            } finally {
+                this.shutdownHookExecuted = true;
+            }
+        }, "shutdown-hook");
+    }
 
+    @Override
+    public void run(ApplicationArguments args) {
+        Runtime.getRuntime().addShutdownHook(this.shutdownHook);
+        this.shutdownHookAdded = true;
+    }
+
+    @PreDestroy
+    public void waitOnShutdownHook() {
+
+        // This condition can happen when spring encountered an exception during start up and is tearing itself down,
+        // but did not call System.exit, so out shutdown hooks are not being executed.
+        // If spring is tearing itself down, we always want to exit the JVM, so we call System.exit manually here, so
+        // our shutdown hooks will be run, and the loop below does not hang forever.
+        if (!isShuttingDown()) {
+            System.exit(1);
+        }
+
+        while (this.shutdownHookAdded && !this.shutdownHookExecuted) {
+            log.info("Waiting on main shutdown hook to be done...");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        log.info("Main shutdown hook done! Proceeding.");
+    }
+
+    private static final Thread DUMMY_HOOK = new Thread();
+
+    public static boolean isShuttingDown() {
+        try {
+            Runtime.getRuntime().addShutdownHook(DUMMY_HOOK);
+            Runtime.getRuntime().removeShutdownHook(DUMMY_HOOK);
+        } catch (IllegalStateException ignored) {
+            return true;
+        }
+        return false;
+    }
+
+    private void shutdown(ShardManager shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
+        //okHttpClient claims that a shutdown isn't necessary
+
+        //shutdown JDA
+        log.info("Shutting down shards");
+        shardManager.shutdown();
+
+        //shutdown executors
+        log.info("Shutting down jda thread pool");
+        final List<Runnable> jdaThreadPoolRunnables = jdaThreadPool.shutdownNow();
+        log.info("{} jda thread pool runnables cancelled", jdaThreadPoolRunnables.size());
+
+        try {
+            jdaThreadPool.awaitTermination(30, TimeUnit.SECONDS);
+            log.info("Jda thread pool terminated");
+        } catch (final InterruptedException e) {
+            log.warn("Interrupted while awaiting executors termination", e);
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static String getVersionInfo() {
