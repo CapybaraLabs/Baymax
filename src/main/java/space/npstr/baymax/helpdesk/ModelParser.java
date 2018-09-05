@@ -16,8 +16,7 @@ import java.util.Map;
  */
 public class ModelParser {
 
-    public ModelParser() {
-    }
+    public ModelParser() {}
 
     public Map<String, Node> parse(String yaml) {
         Yaml snakeYaml = new Yaml(new Constructor(NodeModel.class));

@@ -7,6 +7,8 @@ import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import space.npstr.baymax.EventWaiter;
+import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 
 import javax.security.auth.login.LoginException;
@@ -37,13 +39,16 @@ public class ShardManagerConfiguration {
 
     @Bean(destroyMethod = "") //we manage the lifecycle ourselves tyvm, see shutdown hook in the launcher
     public ShardManager shardManager(BaymaxConfig baymaxConfig, OkHttpClient.Builder httpClientBuilder,
-                                     ScheduledThreadPoolExecutor jdaThreadPool) {
+                                     ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
+                                     HelpDeskListener helpDeskListener) {
 
         Game discordStatus = Game.playing("with Aki");
 
         DefaultShardManagerBuilder shardBuilder = new DefaultShardManagerBuilder()
                 .setToken(baymaxConfig.getDiscordToken())
                 .setGame(discordStatus)
+                .addEventListeners(eventWaiter)
+                .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
                         .retryOnConnectionFailure(false))
                 .setEnableShutdownHook(false)

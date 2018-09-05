@@ -46,6 +46,8 @@ ext {
     okhttpVersion           = '3.11.0'
     annotationsVersion      = '0.0.1'
     snakeYamlVersion        = '1.19' //1.20+ incompatible with spring boot 2.0.4
+    caffeineVersion         = '2.6.2'
+    emojiVersion            = '4.0.0'
 
     jUnitVersion            = '5.2.0'
 
@@ -76,6 +78,8 @@ dependencies {
     compile group: 'com.squareup.okhttp3',  name: 'okhttp',             version: okhttpVersion      // http client
     compile group: 'space.npstr',           name: 'annotations',        version: annotationsVersion // moar annotations
     compile group: 'org.yaml',              name: 'snakeyaml',          version: snakeYamlVersion   // yaml file parsing
+    compile group: 'com.github.ben-manes.caffeine', name:'caffeine',    version: caffeineVersion    // caches
+    compile group: 'com.vdurmont',          name: 'emoji-java',         version: emojiVersion       // emoji lib
 
     //spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter',                 version: springBootVersion
