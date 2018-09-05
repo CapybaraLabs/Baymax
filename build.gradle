@@ -1,0 +1,139 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+buildscript {
+    ext {
+        //@formatter:off
+
+        //plugin versions
+        gradleGitVersion        = '1.5.2'
+        springBootVersion       = '2.0.4.RELEASE'
+        aptVersion              = '0.18'
+
+        //@formatter:on
+    }
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'http://repo.spring.io/plugins-release' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:${gradleGitVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:${aptVersion}"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'com.gorylenko.gradle-git-properties'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'net.ltgt.apt'
+
+group 'space.npstr.baymax'
+version '0.0.1-SNAPSHOT'
+ext {
+    moduleName = 'baymax'
+
+    //@formatter:off
+    javaVersion             = '10'
+    gradleWrapperVersion    = '4.9'
+
+    springBootVersion       = "${springBootVersion}"
+
+    jdaVersion              = '3.7.1_417'
+    logbackVersion          = '1.2.3'
+    sentryVersion           = '1.7.7'
+    okhttpVersion           = '3.11.0'
+    annotationsVersion      = '0.0.1'
+
+    jUnitVersion            = '5.2.0'
+
+    //@formatter:on
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+repositories {
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    // fucks with spring boot jar, we don't need it anyways
+    compile.exclude module: 'opus-java'
+}
+
+dependencies {
+    //@formatter:off
+
+    compile group: 'net.dv8tion',           name: 'JDA',                version: jdaVersion         // discord API
+    compile group: 'ch.qos.logback',        name: 'logback-classic',    version: logbackVersion     // logging framework
+    compile group: 'io.sentry',             name: 'sentry-logback',     version: sentryVersion      // error aggregation
+    compile group: 'com.squareup.okhttp3',  name: 'okhttp',             version: okhttpVersion      // http client
+    compile group: 'space.npstr',           name: 'annotations',        version: annotationsVersion // moar annotations
+
+    //spring
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
+    annotationProcessor group:'org.springframework.boot', name: 'spring-boot-configuration-processor', version: springBootVersion
+
+    //testing
+    testCompile group: 'org.junit.jupiter',    name: 'junit-jupiter-api',       version: jUnitVersion
+    testRuntime group: 'org.junit.jupiter',    name: 'junit-jupiter-engine',    version: jUnitVersion
+
+    //@formatter:on
+}
+
+wrapper {
+    gradleVersion = gradleWrapperVersion
+    //noinspection UnnecessaryQualifiedReference
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn(clean, processResources)
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+bootRun {
+    //compiling tests during bootRun increases the likelyhood of catching broken tests locally instead of on the CI
+    dependsOn compileTestJava
+
+    //pass in custom jvm args
+    // source: https://stackoverflow.com/a/25079415
+    // example: ./gradlew bootRun -PjvmArgs="--illegal-access=debug -Dwhatever=value"
+    if (project.hasProperty('jvmArgs')) {
+        //noinspection GroovyAssignabilityCheck
+        jvmArgs project.jvmArgs.split('\\s+')
+    }
+}
+
+bootJar {
+    archiveName = "baymax.jar"
+    doLast {
+        copy {
+            from 'build/libs/baymax.jar'
+            into '.'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+processResources {
+    //inject values into app.properties
+    filesMatching("**/app.properties") {
+        filter ReplaceTokens, tokens: [
+                "project.version"   : project.version,
+                "project.groupId"   : project.group,
+                "project.artifactId": project.ext.moduleName,
+                "env.BUILD_NUMBER"  : (System.getenv('CI') ? System.getenv('BUILD_NUMBER') : 'DEV'),
+                "env.BUILD_TIME"    : System.currentTimeMillis() + ''
+        ]
+    }
+}
