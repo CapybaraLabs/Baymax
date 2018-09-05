@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by napster on 05.09.18.
@@ -15,21 +16,29 @@ import java.util.Map;
 @Component
 public class Models {
 
-    private final Map<String, Node> akiModel;
+    private final Map<String, Map<String, Node>> models = new ConcurrentHashMap<>();
 
-    public Models() throws IOException {
-        ModelParser modelParser = new ModelParser();
-        this.akiModel = Collections.unmodifiableMap(
-                modelParser.parse(loadModelAsYamlString("models/aki.yaml"))
+    private final ModelParser modelParser = new ModelParser();
+
+    public Models() {}
+
+    public Map<String, Node> getModelByName(String name) {
+        return this.models.computeIfAbsent(name, this::loadModelByName);
+    }
+
+    public Map<String, Node> loadModelByName(String name) {
+        String resourcePath = "models/" + name + ".yaml";
+        return Collections.unmodifiableMap(
+                this.modelParser.parse(loadModelAsYamlString(resourcePath))
         );
     }
 
-    public Map<String, Node> getAkiModel() {
-        return this.akiModel;
-    }
-
-    private String loadModelAsYamlString(String resourceName) throws IOException {
+    private String loadModelAsYamlString(String resourceName) {
         InputStream fileStream = Models.class.getClassLoader().getResourceAsStream(resourceName);
-        return new String(fileStream.readAllBytes());
+        try {
+            return new String(fileStream.readAllBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load model " + resourceName);
+        }
     }
 }
