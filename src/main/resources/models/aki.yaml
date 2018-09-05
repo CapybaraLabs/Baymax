@@ -20,7 +20,7 @@ branches:
 
 ---
 id: server-root
-title: "Denied."
+title: "Please DM one of our Moderators."
 
 ---
 id: bot-broken
@@ -28,7 +28,26 @@ title: "Aki never breaks."
 
 ---
 id: bot-setting
-title: "Aki has no settings to be changed."
+title: "What setting of the Aki bot do you want to change?"
+branches:
+- message: "The language"
+  targetId: bot-setting-language
+- message: "Turn reactions on or off"
+  targetId: bot-setting-reactions
+- message: "Restrict it to a single channel"
+  targetId: bot-setting-restrict
+
+---
+id: bot-setting-language
+title: "Say `!aki lang` to start changing your preferred language."
+
+---
+id: bot-setting-reactions
+title: "Say `!aki thonks disable / enable` to switch reaction on or off."
+
+---
+id: bot-setting-restrict
+title: "Use the Discord permissions to take away Akis write permissions for all the channels where it should not talk in."
 
 ---
 id: bot-suggestion
