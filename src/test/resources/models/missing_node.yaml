@@ -1,0 +1,8 @@
+---
+id: root
+title: "How may I help you?"
+branches:
+- message: "I need help with the Aki Bot"
+  targetId: bot-root
+- message: "I need help with the Aki Server"
+  targetId: server-root

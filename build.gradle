@@ -45,6 +45,7 @@ ext {
     sentryVersion           = '1.7.7'
     okhttpVersion           = '3.11.0'
     annotationsVersion      = '0.0.1'
+    snakeYamlVersion        = '1.19' //1.20+ incompatible with spring boot 2.0.4
 
     jUnitVersion            = '5.2.0'
 
@@ -74,6 +75,7 @@ dependencies {
     compile group: 'io.sentry',             name: 'sentry-logback',     version: sentryVersion      // error aggregation
     compile group: 'com.squareup.okhttp3',  name: 'okhttp',             version: okhttpVersion      // http client
     compile group: 'space.npstr',           name: 'annotations',        version: annotationsVersion // moar annotations
+    compile group: 'org.yaml',              name: 'snakeyaml',          version: snakeYamlVersion   // yaml file parsing
 
     //spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
