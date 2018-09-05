@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "baymax.discord-token",
+      "type": "java.lang.String",
+      "description": "Discord Bot Token."
+    },
+    {
+      "name": "sentry.dsn",
+      "type": "java.lang.String",
+      "description": "DSN of your sentry project."
+    }
+  ]
+}
