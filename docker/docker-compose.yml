@@ -1,0 +1,37 @@
+version: '3.6'
+services:
+
+  bot:
+    image: napstr/baymax:master
+    #image: napstr/baymax:master-arm64v8
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+#    ports:
+#      - 127.0.0.1:8849:8849   # JProfiler
+    volumes:
+      - ./baymax.yaml:/opt/baymax/baymax.yaml:ro
+      - ./logs:/opt/baymax/logs
+      - ./logs/gc:/opt/baymax/logs/gc
+    stop_grace_period: 60s
+    entrypoint:
+      - java
+      - -Xmx256m
+      - -XX:+HeapDumpOnOutOfMemoryError
+      - -XX:HeapDumpPath=emergencydump.hprof
+      - -Xlog:gc*:logs/gc/gc-%t.log::filesize=1g
+      - -XX:+UseG1GC
+      - -XX:+ParallelRefProcEnabled
+      - -XX:+UseStringDeduplication
+      - -jar
+      - baymax.jar
+
+  #watchtower:
+  #  image: v2tec/watchtower
+  #  image: napstr/watchtower:arm64v8-latest
+  #  restart: always
+  #  labels:
+  #    - "com.centurylinklabs.watchtower.enable=true"
+  #  volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #  command: --cleanup --label-enable --interval 300 #seconds
