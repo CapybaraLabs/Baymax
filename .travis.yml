@@ -1,5 +1,9 @@
 sudo: required
 
+addons:
+  sonarcloud:
+    organization: "napstr-github"
+
 services:
 - docker
 
@@ -8,6 +12,7 @@ env:
     - BUILD_NUMBER: "$TRAVIS_BUILD_NUMBER"
     - DOCKER_USERNAME: napstr
     - secure: "Phduak3SfZHvKw2klT7ckqUj/ySaYFDtE7DnsWjHqc4Q8jVCxu2g+kx6IfLNweu/lslH1eCDOmwjo5AVIuO9YE2TqsJXEWkzkJstThJYWyfjzAyOIvowjSC7KbaT0cu6RjzHsCOYRoTBZbrb7LZjxnN1NHKdThbuRgYnENba/nltlkt1+H6b6boTgghLH1gt0F5gdrZAhn+TmoZSpTr1ioTF5OVPtW+wgH/ATPXGpxyejDOeqcL110rZbtvVXQH8U4XJSl8nMkvOHe0ZyR7/s1xNF9hbhHi851OxEo34FRoRf7BXk8jzKN3KQHcDyZ0AN9Run0q/IyKgyyfDX9V1+FTJvfjrBeymbjjZ/kGcY45LeaBPsQxH+qHQAJjLtiNXyYkLRf3mp1/SW6wm7H83T9x4kc6+x9eRPIRUOscmx8jLTt0jfmQdIhcJ/B9smr8sIw4hAWZQWLI/oxuNBD3Fj93nTWmHRFC27exar9Gn+0otvOEcfftYfnWKBQUxcUe953rrP57KoXV5pF493plRN+yUr4Se5uB17aLZEOxO2O2W3suO+kFb3yD3y9tFjLpc9K/t9I3tppU/N/2Y7tn7p3fYtXZIkEh77ab2ovtOPC7h6giXFZWMrqN007pkT8bndDrSG9pVB/8HYcrW9MW80VMK/jjgiTAanldyBdgX+Y8="
+    - secure: "mQAShZMdb0RdmJgyIqi4ZfWCe08OxLu9XRyGvfBHxmxOsTtF2BZ62lKCA6QTyV5qko15VUuFVyQS3+D2lCD6CeO9PYGX6TxehbdDE154pPBjaAwTw+IiwmmJzZ3IUvYJq00qQsULLNa+GZZ2c457IM2sThlJbieRfkem3C0AodczPX+iCnPQEWpNsqR6Zf8QfAZkhBNLRITNJHerqhnS5xnlOc60BMnWheZotqljkUbIsigwJMk7lOCDaSKxgeTorJQtHcUqZVpOiNfVe8bjJx9E61AE6giGBZKweQG5SvgvrPQIUEJ0N0bhIi3CPQivyJkY50UXcrU2XXpHYOlThLIKjuT/KYrF3oNqb0mkUWA7m90eTf7v8CP/zKawvtGVKMga7wurT2ykix2+VXnZAjyvoJRKHusCnAq601zmLEK3nLp5J+0ukQniHX/yXEQrsrC8NEcgKoMn22S/fOuUVb12XeZ+8SVZwSm0upIMWatkO545bDBei+gA2Hc59y9gBE/Rl3oDwIlSXtPym/SMVtqIDFRUhojXyeBpS2FjXgKDhp36Z9TjORxlJKTqII4rWXSTHGC4mQZHlvauiiBAEWyH/yYxgrK2Vu9GXC6zYKBYkurFvjFApnpNV53QH7TddqhNZLqyM+4EMEYGwUnzjZR2llpZuoe1oQHg99O/Wfg="
 
 language: java
 
@@ -17,14 +22,23 @@ cache:
     - "$HOME/.gradle"
     - ".gradle/wrapper"
     - ".gradle/caches"
+    - "$HOME/.sonar/cache"
 
 stages:
+  - sonar
   - build & publish
 
 
 jobs:
   fast_finish: true
   include:
+    - stage: sonar
+      jdk: openjdk10
+      before_script:
+      #for full sonar cloud blame information
+        - git fetch --depth=10000
+      script:
+        - ./gradlew sonarqube -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=napstr-github -Dsonar.login=$SONAR_TOKEN
     - stage: build & publish
       jdk: openjdk10
       script:
