@@ -82,14 +82,28 @@ public class UserDialogue {
     private void parseUserInput(GuildMessageReceivedEvent event, Node currentNode) {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
+
+        int numberPicked;
         try {
-            int numberPicked = Integer.parseInt(contentRaw);
-            Branch branch = currentNode.getBranches().get(numberPicked);
-            Node nextNode = this.model.get(branch.getTargetId());
-            sendNode(nextNode);
-        } catch (Exception e) {
-            sendNode(currentNode);
+            numberPicked = Integer.parseInt(contentRaw);
+        } catch (NumberFormatException e) {
+            sendNode(currentNode); //todo better message?
+            return;
         }
+
+        if (numberPicked < 0 || numberPicked > currentNode.getBranches().size()) {
+            sendNode(currentNode); //todo better message?
+            return;
+        }
+
+        Node nextNode;
+        if (numberPicked == currentNode.getBranches().size()) {
+            nextNode = this.model.get("root");
+        } else {
+            Branch branch = currentNode.getBranches().get(numberPicked);
+            nextNode = this.model.get(branch.getTargetId());
+        }
+        sendNode(nextNode);
     }
 
     private Predicate<GuildMessageReceivedEvent> messageOfThisUser() {
@@ -109,6 +123,9 @@ public class UserDialogue {
                     .append(" ")
                     .append(branch.getMessage())
                     .append("\n");
+        }
+        if (!"root".equals(node.getId())) {
+            mb.append(numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
         }
 
         return mb.build();
