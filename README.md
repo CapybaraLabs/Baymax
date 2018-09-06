@@ -3,7 +3,8 @@
 ## Baymax
 _A friendly help desk bot for Discord_
 
-[![](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/dashboard?id=space.npstr.baymax%3Abaymax)
+[![Build Status](https://travis-ci.com/napstr/Baymax.svg?branch=master)](https://travis-ci.com/napstr/Baymax)
+[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=space.npstr.baymax%3Abaymax&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=space.npstr.baymax%3Abaymax)
 
 
 ### Why?
