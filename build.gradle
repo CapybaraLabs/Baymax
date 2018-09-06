@@ -8,6 +8,7 @@ buildscript {
         gradleGitVersion        = '1.5.2'
         springBootVersion       = '2.0.4.RELEASE'
         aptVersion              = '0.18'
+        sonarqubeVersion        = '2.6.2'
 
         //@formatter:on
     }
@@ -20,6 +21,7 @@ buildscript {
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:${gradleGitVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
         classpath "net.ltgt.gradle:gradle-apt-plugin:${aptVersion}"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeVersion}"
     }
 }
 
@@ -28,6 +30,8 @@ apply plugin: 'java'
 apply plugin: 'com.gorylenko.gradle-git-properties'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'net.ltgt.apt'
+apply plugin: 'jacoco'
+apply plugin: 'org.sonarqube'
 
 group 'space.npstr.baymax'
 version '0.0.1-SNAPSHOT'
@@ -129,6 +133,15 @@ bootJar {
 
 test {
     useJUnitPlatform()
+    jacoco {
+        includes['space.npstr.baymax.*']
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.inclusions', 'src/main/java/space/npstr/baymax/**/*'
+    }
 }
 
 processResources {

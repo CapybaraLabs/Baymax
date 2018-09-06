@@ -3,6 +3,8 @@
 ## Baymax
 _A friendly help desk bot for Discord_
 
+[![](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/dashboard?id=space.npstr.baymax%3Abaymax)
+
 
 ### Why?
 The job of support staff members of Discord (bot) servers is an annoying task.
