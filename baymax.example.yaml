@@ -1,0 +1,26 @@
+---
+
+spring:
+  output:
+    ansi:
+      enabled:      always
+  main:
+    banner-mode:    log
+
+logging:
+  file:             './logs/baymax.log'
+  file.max-history: 30
+  file.max-size:    1GB
+
+  level:
+    root:           INFO
+    space.npstr:    TRACE
+
+sentry:
+  dsn:              ""
+
+baymax:
+  discord-token:    ""
+  help-desks:
+  - channel-id:     487005342014636032
+    model-name:     aki
