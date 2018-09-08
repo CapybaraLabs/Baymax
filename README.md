@@ -98,9 +98,5 @@ title: "We don't take any suggestions currently."
 And here is how it looks in chat:
 ![](https://ratelimits.are-la.me/aeb692.gif)
 
-### License
-All rights reserved.
-Will be properly open sauce soon :tm:
-
 ### Dependencies
 Todo. Meanwhile just have a look at the `build.gradle` file 
