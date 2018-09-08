@@ -8,10 +8,12 @@ import space.npstr.baymax.helpdesk.exception.UnreferencedNodesException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by napster on 05.09.18.
@@ -24,16 +26,16 @@ public class ModelParserTest {
     void parse_SaneModel_Ok() throws IOException {
         Map<String, Node> model = this.modelParser.parse(loadModelAsYamlString("models/sane.yaml"));
 
-        Node root = null;
-        for (Node node : model.values()) {
-            if ("root".equals(node.getId())) {
-                root = node;
-                break;
-            }
-        }
-
+        Node root = model.get("root");
         assertNotNull(root);
         assertEquals("How may I help you?", root.getTitle());
+        assertEquals(2, root.getBranches().size());
+
+        Node supportRole = model.get("support-role");
+        assertNotNull(supportRole);
+        Optional<Long> roleId = Optional.ofNullable(supportRole.getRoleId());
+        assertTrue(roleId.isPresent());
+        assertEquals(487925645989380108L, roleId.get().longValue());
     }
 
     @Test

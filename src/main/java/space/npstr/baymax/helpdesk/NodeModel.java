@@ -1,5 +1,6 @@
 package space.npstr.baymax.helpdesk;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class NodeModel implements Node {
     private String id = "";
 
     private String title = "";
+
+    private Long roleId = null;
 
     private List<BranchModel> branches = Collections.emptyList();
 
@@ -32,6 +35,16 @@ public class NodeModel implements Node {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    @Nullable
+    public Long getRoleId() {
+        return this.roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     @Override

@@ -2,9 +2,14 @@ package space.npstr.baymax;
 
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.requests.RequestFuture;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
@@ -60,6 +65,25 @@ public class UserDialogue {
         return Optional.ofNullable(this.shardManager.getTextChannelById(this.channelId));
     }
 
+    private void assignRole(TextChannel textChannel, long userId, long roleId) {
+        Guild guild = textChannel.getGuild();
+        Role role = guild.getRoleById(roleId);
+        if (role == null) {
+            log.warn("Where did the role {} go?", roleId);
+            return;
+        }
+
+        Member member = guild.getMemberById(userId);
+
+        try {
+            guild.getController().addSingleRoleToMember(member, role).queue();
+        } catch (InsufficientPermissionException e) {
+            log.error("Can't assign role {} due to missing permission {}", role, e.getPermission(), e);
+        } catch (HierarchyException e) {
+            log.error("Can't assign role {} due to hierarchy issue", role, e);
+        }
+    }
+
     private void sendNode(Node node) {
         Optional<TextChannel> textChannelOpt = getTextChannel();
         if (!textChannelOpt.isPresent()) {
@@ -69,6 +93,8 @@ public class UserDialogue {
 
         TextChannel textChannel = textChannelOpt.get();
         textChannel.sendMessage(asMessage(node)).queue(message -> this.messagesToCleanUp.add(message.getIdLong()));
+
+        Optional.ofNullable(node.getRoleId()).ifPresent(aLong -> assignRole(textChannel, this.userId, aLong));
 
         this.eventWaiter.waitForEvent(
                 GuildMessageReceivedEvent.class,

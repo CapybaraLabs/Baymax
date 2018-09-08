@@ -17,6 +17,8 @@ branches:
   targetId: bot-setting
 - message: "I have a suggestion."
   targetId: bot-suggestion
+- message: "None of the above."
+  targetId: support-role
 
 ---
 id: server-root
@@ -33,3 +35,8 @@ title: "Aki has no settings to be changed."
 ---
 id: bot-suggestion
 title: "We don't take any suggestions currently."
+
+---
+id: support-role
+title: "Explain your problem to one of our helpers in <#487925562300694531>."
+roleId: 487925645989380108
