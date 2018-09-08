@@ -33,6 +33,8 @@ A sane model has the following properties:
 - Each defined node can be reached from the `root` node
 
 
+A node may optionally have a role id. Baymax will assign that role id to the user who reaches that node.
+
 A basic example:
 
 ```yaml
@@ -57,6 +59,8 @@ branches:
   targetId: bot-setting
 - message: "I have a suggestion."
   targetId: bot-suggestion
+- message: "None of the above."
+  targetId: support-role
 
 ---
 id: server-root
@@ -93,6 +97,10 @@ title: "Use the Discord permissions to take away Akis write permissions for all 
 id: bot-suggestion
 title: "We don't take any suggestions currently."
 
+---
+id: support-role
+title: "Explain your problem to one of our helpers in <#487925562300694531>."
+roleId: 487925645989380108
 ```
 
 And here is how it looks in chat:
