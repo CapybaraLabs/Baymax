@@ -11,6 +11,7 @@ services:
 #      - 127.0.0.1:8849:8849   # JProfiler
     volumes:
       - ./baymax.yaml:/opt/baymax/baymax.yaml:ro
+      - ./models:/opt/baymax/models:ro
       - ./logs:/opt/baymax/logs
       - ./logs/gc:/opt/baymax/logs/gc
     stop_grace_period: 60s

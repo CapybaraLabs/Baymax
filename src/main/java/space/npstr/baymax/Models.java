@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import space.npstr.baymax.helpdesk.ModelParser;
 import space.npstr.baymax.helpdesk.Node;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -44,18 +46,22 @@ public class Models {
     }
 
     public Map<String, Node> loadModelByName(String name) {
-        String resourcePath = "models/" + name + ".yaml";
+        String filePath = "models/" + name + ".yaml";
         return Collections.unmodifiableMap(
-                this.modelParser.parse(loadModelAsYamlString(resourcePath))
+                this.modelParser.parse(loadModelAsYamlString(filePath))
         );
     }
 
-    private String loadModelAsYamlString(String resourceName) {
-        InputStream fileStream = Models.class.getClassLoader().getResourceAsStream(resourceName);
+    private String loadModelAsYamlString(String fileName) {
+        File modelFile = new File(fileName);
+        if (!modelFile.exists() || !modelFile.canRead()) {
+            throw new RuntimeException("Failed to find or read model file " + fileName);
+        }
         try {
+            InputStream fileStream = new FileInputStream(modelFile);
             return new String(fileStream.readAllBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load model " + resourceName);
+            throw new RuntimeException("Failed to load model " + fileName, e);
         }
     }
 }
