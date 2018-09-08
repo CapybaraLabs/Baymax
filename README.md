@@ -98,5 +98,49 @@ title: "We don't take any suggestions currently."
 And here is how it looks in chat:
 ![](https://ratelimits.are-la.me/aeb692.gif)
 
-### Dependencies
-Todo. Meanwhile just have a look at the `build.gradle` file 
+
+### Dependencies:
+
+- **JDA (Java Discord API)**:
+  - [Source Code](https://github.com/DV8FromTheWorld/JDA)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0)
+  - [Maven Repository](https://bintray.com/dv8fromtheworld/maven/JDA)
+
+- **Logback Classic**:
+  - [Website](https://logback.qos.ch/)
+  - [Source Code](https://github.com/qos-ch/logback)
+  - [Logback License](https://logback.qos.ch/license.html)
+  - [Maven Repository](https://mvnrepository.com/artifact/ch.qos.logback/logback-classic)
+  
+- **Sentry Logback**:
+  - [Website](https://docs.sentry.io/clients/java/modules/logback/)
+  - [Source Code](https://github.com/getsentry/sentry-java/tree/master/sentry-logback)
+  - [BSD 3-Clause License](https://github.com/getsentry/sentry-java/blob/master/LICENSE)
+  - [Maven Repository](https://mvnrepository.com/artifact/io.sentry/sentry-logback)
+
+- **OkHttp**:
+  - [Website](https://square.github.io/okhttp/)
+  - [Source Code](https://github.com/square/okhttp)
+  - [Apache 2.0 License](https://square.github.io/okhttp/#license)
+  - [Maven Repository](https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp) 
+
+- **SnakeYaml**:
+  - [Source Code](https://bitbucket.org/asomov/snakeyaml)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0)
+  - [Maven Repository](https://mvnrepository.com/artifact/org.yaml/snakeyaml)
+
+- **Caffeine**:
+  - [Source Code](https://github.com/ben-manes/caffeine)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - [Maven Repository](https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine)
+
+- **emoji-java**:
+  - [Source Code](https://github.com/vdurmont/emoji-java)
+  - [MIT License](http://www.opensource.org/licenses/mit-license.php)
+  - [Maven Repository](https://mvnrepository.com/artifact/com.vdurmont/emoji-java)
+
+- **Spring Boot**:
+  - [Website](https://spring.io/projects/spring-boot)
+  - [Source Code](https://github.com/spring-projects/spring-boot)
+  - [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+  - [Maven Repository](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter)
