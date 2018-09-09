@@ -60,8 +60,10 @@ public class EventWaiter implements EventListener {
         this.single = new ScheduledThreadPoolExecutor(1);
     }
 
-    public <T extends Event> void waitForEvent(Class<T> classType, Predicate<T> condition,
-                                               Consumer<T> action, long timeout, TimeUnit unit, Runnable timeoutAction) {
+    public <T extends Event> EventWaiter.WaitingEvent<T> waitForEvent(Class<T> classType, Predicate<T> condition,
+                                                                      Consumer<T> action, long timeout, TimeUnit unit,
+                                                                      Runnable timeoutAction) {
+
         EventWaiter.WaitingEvent<T> we = new EventWaiter.WaitingEvent<>(condition, action);
 
         this.single.execute(() -> {
@@ -78,6 +80,7 @@ public class EventWaiter implements EventListener {
                 }
             }, timeout, unit);
         });
+        return we;
     }
 
     @Override
@@ -108,7 +111,7 @@ public class EventWaiter implements EventListener {
         }
     }
 
-    private class WaitingEvent<T extends Event> {
+    public class WaitingEvent<T extends Event> {
         final Predicate<T> condition;
         final Consumer<T> action;
 
@@ -117,12 +120,18 @@ public class EventWaiter implements EventListener {
             this.action = action;
         }
 
-        boolean attempt(T event) {
+        private boolean attempt(T event) {
             if (this.condition.test(event)) {
                 EventWaiter.this.pool.execute(() -> this.action.accept(event));
                 return true;
             }
             return false;
+        }
+
+        public void cancel() {
+            EventWaiter.this.single.execute(
+                    () -> EventWaiter.this.waitingEvents.values().forEach(set -> set.remove(this))
+            );
         }
     }
 

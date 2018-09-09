@@ -31,6 +31,7 @@ import net.dv8tion.jda.core.requests.RequestFuture;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,8 @@ public class UserDialogue {
     private final long userId;
     private final long channelId;
     private List<Long> messagesToCleanUp = new ArrayList<>();
+    @Nullable
+    private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
 
     public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event) {
         this.eventWaiter = eventWaiter;
@@ -66,6 +69,11 @@ public class UserDialogue {
     }
 
     public void done() {
+        var we = this.waitingEvent;
+        if (we != null) {
+            we.cancel();
+        }
+
         //todo dont run this method twice (removal + event waiter timeout)
         getTextChannel().ifPresent(textChannel -> {
             List<String> messageIdsAsStrings = this.messagesToCleanUp.stream()
@@ -74,8 +82,6 @@ public class UserDialogue {
             List<RequestFuture<Void>> requestFutures = textChannel.purgeMessagesById(messageIdsAsStrings);
             //todo listen for failures
         });
-
-        //todo cancel outstanding event waiter events?
     }
 
     private Optional<TextChannel> getTextChannel() {
@@ -113,7 +119,7 @@ public class UserDialogue {
 
         Optional.ofNullable(node.getRoleId()).ifPresent(aLong -> assignRole(textChannel, this.userId, aLong));
 
-        this.eventWaiter.waitForEvent(
+        this.waitingEvent = this.eventWaiter.waitForEvent(
                 GuildMessageReceivedEvent.class,
                 messageOfThisUser(),
                 event -> this.parseUserInput(event, node),
