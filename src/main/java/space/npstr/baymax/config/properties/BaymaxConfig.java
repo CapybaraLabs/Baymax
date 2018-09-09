@@ -31,6 +31,7 @@ import java.util.List;
 public class BaymaxConfig {
 
     private String discordToken = "";
+    private long staffRoleId;
     private List<HelpDesk> helpDesks = Collections.emptyList();
 
     public String getDiscordToken() {
@@ -39,6 +40,14 @@ public class BaymaxConfig {
 
     public void setDiscordToken(String discordToken) {
         this.discordToken = discordToken;
+    }
+
+    public long getStaffRoleId() {
+        return this.staffRoleId;
+    }
+
+    public void setStaffRoleId(long staffRoleId) {
+        this.staffRoleId = staffRoleId;
     }
 
     public List<HelpDesk> getHelpDesks() {

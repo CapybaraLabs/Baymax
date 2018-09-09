@@ -21,6 +21,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -83,6 +84,16 @@ public class HelpDeskListener extends ListenerAdapter {
         var userDialogues = this.helpDesksDialogues.computeIfAbsent(
                 helpDesk.getChannelId(), channelId -> this.createUserDialogueCache()
         );
+        if (isStaff(event.getMember())) {
+            if (event.getMessage().isMentioned(event.getJDA().getSelfUser())) {
+                if (event.getMessage().getContentRaw().toLowerCase().contains("init")) {
+                    userDialogues.invalidateAll();
+                    userDialogues.cleanUp();
+                    init(event.getChannel(), helpDesk.getModelName());
+                    return;
+                }
+            }
+        }
 
         userDialogues.get(event.getAuthor().getIdLong(),
                 userId -> {
@@ -102,19 +113,27 @@ public class HelpDeskListener extends ListenerAdapter {
             TextChannel channel = shardManager.getTextChannelById(helpDesk.getChannelId());
             if (channel == null) {
                 log.warn("Failed to find and setup configured help desk channel {}", helpDesk.getChannelId());
-                continue;
+                return;
             }
-
-            try {
-                purgeChannel(channel)//todo listen for failures
-                        .whenComplete((__, ___) -> {
-                            var model = this.models.getModelByName(helpDesk.getModelName());
-                            channel.sendMessage(UserDialogue.asMessage(model.get("root"))).queue();
-                        }); //todo listen for failures
-            } catch (Exception e) {
-                log.error("Failed to purge channel {}", channel, e);
-            }
+            init(channel, helpDesk.getModelName());
         }
+    }
+
+    private void init(TextChannel channel, String modelName) {
+        try {
+            purgeChannel(channel)//todo listen for failures
+                    .whenComplete((__, ___) -> {
+                        var model = this.models.getModelByName(modelName);
+                        channel.sendMessage(UserDialogue.asMessage(model.get("root"))).queue();
+                    }); //todo listen for failures
+        } catch (Exception e) {
+            log.error("Failed to purge channel {}", channel, e);
+        }
+    }
+
+    private boolean isStaff(Member member) {
+        return member.getRoles().stream()
+                .anyMatch(role -> role.getIdLong() == this.baymaxConfig.getStaffRoleId());
     }
 
     private Cache<Long, UserDialogue> createUserDialogueCache() {
