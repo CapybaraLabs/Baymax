@@ -118,15 +118,14 @@ public class UserDialogue {
 
     private void sendNode(Node node) {
         Optional<TextChannel> textChannelOpt = getTextChannel();
-        if (!textChannelOpt.isPresent()) {
+        if (textChannelOpt.isPresent()) {
+            TextChannel textChannel = textChannelOpt.get();
+            textChannel.sendMessage(asMessage(node)).queue(message -> this.messagesToCleanUp.add(message.getIdLong()));
+
+            Optional.ofNullable(node.getRoleId()).ifPresent(aLong -> assignRole(textChannel, this.userId, aLong));
+        } else {
             log.warn("Where did the channel {} go?", this.channelId);
-            return; //todo dont leave this in a broken state
         }
-
-        TextChannel textChannel = textChannelOpt.get();
-        textChannel.sendMessage(asMessage(node)).queue(message -> this.messagesToCleanUp.add(message.getIdLong()));
-
-        Optional.ofNullable(node.getRoleId()).ifPresent(aLong -> assignRole(textChannel, this.userId, aLong));
 
         this.waitingEvent = this.eventWaiter.waitForEvent(
                 GuildMessageReceivedEvent.class,
