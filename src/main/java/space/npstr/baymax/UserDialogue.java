@@ -55,6 +55,7 @@ public class UserDialogue {
     private List<Long> messagesToCleanUp = new ArrayList<>();
     @Nullable
     private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
+    private boolean done = false;
 
     public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event) {
         this.eventWaiter = eventWaiter;
@@ -68,13 +69,17 @@ public class UserDialogue {
         parseUserInput(event, model.get("root"));
     }
 
-    public void done() {
+    public synchronized void done() {
         var we = this.waitingEvent;
         if (we != null) {
             we.cancel();
         }
 
-        //todo dont run this method twice (removal + event waiter timeout)
+        if (this.done) {
+            return;
+        }
+        this.done = true;
+
         getTextChannel().ifPresent(textChannel -> {
             List<String> messageIdsAsStrings = this.messagesToCleanUp.stream()
                     .map(id -> Long.toString(id))
