@@ -85,7 +85,11 @@ public class UserDialogue {
                     .map(id -> Long.toString(id))
                     .collect(Collectors.toList());
             List<RequestFuture<Void>> requestFutures = textChannel.purgeMessagesById(messageIdsAsStrings);
-            //todo listen for failures
+            requestFutures.forEach(f -> f.whenComplete((__, t) -> {
+                if (t != null) {
+                    log.error("Failed to purge messages for user {} in channel {}", this.userId, this.channelId, t);
+                }
+            }));
         });
     }
 

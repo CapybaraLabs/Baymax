@@ -26,7 +26,20 @@ title: "Please DM one of our Moderators."
 
 ---
 id: bot-broken
-title: "Aki never breaks."
+title: "What about Aki is broken?"
+branches:
+- message: "Aki is offline"
+  targetId: bot-offline
+- message: "Aki isn't responding"
+  targetId: bot-not-responding
+
+---
+id: bot-offline
+title: "If the bot is offline in your server, but is online in this server, your shard may be experiencing an outage. Please inform a support team member for further assistance."
+
+---
+id: bot-not-responding
+title: "If Aki is not responding, did you maybe change the prefix? Say `@Aki#9694 prefix` to check Aki's current prefix."
 
 ---
 id: bot-setting
@@ -36,6 +49,8 @@ branches:
   targetId: bot-setting-language
 - message: "Turn reactions on or off"
   targetId: bot-setting-reactions
+- message: "The prefix"
+  targetId: bot-prefix
 - message: "Restrict it to a single channel"
   targetId: bot-setting-restrict
 
@@ -46,6 +61,10 @@ title: "Say `!aki lang` to start changing your preferred language."
 ---
 id: bot-setting-reactions
 title: "Say `!aki thonks disable / enable` to switch reaction on or off."
+
+---
+id: bot-prefix
+title: "Say `!aki prefix <new prefix>` to change Aki's prefix. Say `@Aki#9694 prefix reset` to reset Aki's prefix."
 
 ---
 id: bot-setting-restrict

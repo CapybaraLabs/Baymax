@@ -121,11 +121,18 @@ public class HelpDeskListener extends ListenerAdapter {
 
     private void init(TextChannel channel, String modelName) {
         try {
-            purgeChannel(channel)//todo listen for failures
-                    .whenComplete((__, ___) -> {
-                        var model = this.models.getModelByName(modelName);
-                        channel.sendMessage(UserDialogue.asMessage(model.get("root"))).queue();
-                    }); //todo listen for failures
+            purgeChannel(channel)
+                    .whenComplete((__, t) -> {
+                        if (t != null) {
+                            log.error("Failed to purge messages for init in channel {} for model {}", channel, modelName, t);
+                        }
+                        try {
+                            var model = this.models.getModelByName(modelName);
+                            channel.sendMessage(UserDialogue.asMessage(model.get("root"))).queue();
+                        } catch (Exception e) {
+                            log.error("Failed to send init message in channel {} for model {}", channel, modelName, e);
+                        }
+                    });
         } catch (Exception e) {
             log.error("Failed to purge channel {}", channel, e);
         }
