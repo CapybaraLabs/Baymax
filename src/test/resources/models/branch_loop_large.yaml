@@ -1,0 +1,76 @@
+---
+id: root
+title: "Root"
+branches:
+- message: "Zero"
+  targetId: zero
+
+---
+id: zero
+title: "Zero"
+branches:
+- message: "One"
+  targetId: one
+
+---
+id: one
+title: "One"
+branches:
+- message: "Two"
+  targetId: two
+
+---
+id: two
+title: "Two"
+branches:
+- message: "Three"
+  targetId: three
+
+---
+id: three
+title: "Three"
+branches:
+- message: "Four"
+  targetId: four
+
+---
+id: four
+title: "Four"
+branches:
+- message: "Five"
+  targetId: five
+
+---
+id: five
+title: "Five"
+branches:
+- message: "Six"
+  targetId: six
+
+---
+id: six
+title: "Six"
+branches:
+- message: "Seven"
+  targetId: seven
+
+---
+id: seven
+title: "Seven"
+branches:
+- message: "Eight"
+  targetId: eight
+
+---
+id: eight
+title: "Eight"
+branches:
+- message: "Nine"
+  targetId: nine
+
+---
+id: nine
+title: "Nine"
+branches:
+- message: "Zero"
+  targetId: zero

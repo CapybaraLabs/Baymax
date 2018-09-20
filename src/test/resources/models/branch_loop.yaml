@@ -1,0 +1,20 @@
+---
+id: root
+title: "Whatever"
+branches:
+- message: "Foo"
+  targetId: foo
+
+---
+id: foo
+title: "Whatever"
+branches:
+- message: "Bar"
+  targetId: bar
+
+---
+id: bar
+title: "Whatever"
+branches:
+- message: "Foo"
+  targetId: foo

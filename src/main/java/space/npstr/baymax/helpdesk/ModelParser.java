@@ -71,6 +71,11 @@ public class ModelParser {
     private void traverse(Node node, Map<String, Node> allNodes, Map<String, Node> unreferencedNodes) {
         List<? extends Branch> branches = node.getBranches();
 
+        Node remove = unreferencedNodes.remove(node.getId());
+        if (remove == null) {
+            return; //already visited this node
+        }
+
         for (Branch branch : branches) {
             String targetId = branch.getTargetId();
             Node targetNode = allNodes.get(targetId);
@@ -82,7 +87,5 @@ public class ModelParser {
             }
             traverse(targetNode, allNodes, unreferencedNodes);
         }
-
-        unreferencedNodes.remove(node.getId());
     }
 }

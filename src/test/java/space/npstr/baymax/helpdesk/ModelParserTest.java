@@ -87,6 +87,31 @@ public class ModelParserTest {
         assertEquals("root", model.get("foo-bar").getBranches().get(0).getTargetId());
     }
 
+    @Test
+    void parse_ModelWithBranchLoop_Ok() throws IOException {
+        Map<String, Node> model = this.modelParser.parse(loadModelAsYamlString("models/branch_loop.yaml"));
+        assertNotNull(model.get("root"));
+        assertNotNull(model.get("foo"));
+        assertNotNull(model.get("bar"));
+        assertEquals("bar", model.get("foo").getBranches().get(0).getTargetId());
+        assertEquals("foo", model.get("bar").getBranches().get(0).getTargetId());
+    }
+
+    @Test
+    void parse_ModelWithLargeBranchLoop_Ok() throws IOException {
+        Map<String, Node> model = this.modelParser.parse(loadModelAsYamlString("models/branch_loop_large.yaml"));
+        assertNotNull(model.get("root"));
+        assertNotNull(model.get("zero"));
+        assertNotNull(model.get("five"));
+        assertNotNull(model.get("eight"));
+
+        assertEquals("two", model.get("one").getBranches().get(0).getTargetId());
+        assertEquals("four", model.get("three").getBranches().get(0).getTargetId());
+        assertEquals("seven", model.get("six").getBranches().get(0).getTargetId());
+        assertEquals("zero", model.get("nine").getBranches().get(0).getTargetId());
+    }
+
+
     private String loadModelAsYamlString(String resourceName) throws IOException {
         InputStream fileStream = ModelParserTest.class.getClassLoader().getResourceAsStream(resourceName);
         return new String(fileStream.readAllBytes());
