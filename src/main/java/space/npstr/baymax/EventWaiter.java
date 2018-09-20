@@ -67,10 +67,13 @@ public class EventWaiter implements EventListener {
         EventWaiter.WaitingEvent<T> we = new EventWaiter.WaitingEvent<>(condition, action);
 
         this.single.execute(() -> {
-            Set<EventWaiter.WaitingEvent<? extends Event>> set
-                    = this.waitingEvents.computeIfAbsent(classType, c -> new HashSet<>());
-            set.add(we);
+            this.waitingEvents.computeIfAbsent(classType, c -> new HashSet<>())
+                    .add(we);
             this.single.schedule(() -> {
+                var set = this.waitingEvents.get(classType);
+                if (set == null) {
+                    return;
+                }
                 if (set.remove(we)) {
                     this.pool.execute(timeoutAction);
                 }
