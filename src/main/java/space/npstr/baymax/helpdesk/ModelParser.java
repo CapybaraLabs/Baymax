@@ -77,6 +77,9 @@ public class ModelParser {
             if (targetNode == null) {
                 throw new MissingTargetNodeException(node, targetId);
             }
+            if ("root".equals(targetId)) {
+                continue;
+            }
             traverse(targetNode, allNodes, unreferencedNodes);
         }
 

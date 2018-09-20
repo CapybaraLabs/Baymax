@@ -1,0 +1,13 @@
+---
+id: root
+title: "Foo"
+branches:
+- message: "Bar"
+  targetId: foo-bar
+
+---
+id: foo-bar
+title: "Whatever"
+branches:
+- message: "Loop"
+  targetId: root

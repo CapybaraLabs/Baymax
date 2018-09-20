@@ -79,6 +79,14 @@ public class ModelParserTest {
         );
     }
 
+    @Test
+    void parse_ModelWithRootLoop_Ok() throws IOException {
+        Map<String, Node> model = this.modelParser.parse(loadModelAsYamlString("models/root_loop.yaml"));
+        assertNotNull(model.get("root"));
+        assertNotNull(model.get("foo-bar"));
+        assertEquals("root", model.get("foo-bar").getBranches().get(0).getTargetId());
+    }
+
     private String loadModelAsYamlString(String resourceName) throws IOException {
         InputStream fileStream = ModelParserTest.class.getClassLoader().getResourceAsStream(resourceName);
         return new String(fileStream.readAllBytes());
