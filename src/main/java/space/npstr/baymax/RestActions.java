@@ -54,6 +54,16 @@ public class RestActions {
         }
     }
 
+    public void removeRole(Guild guild, Member member, Role role) {
+        try {
+            guild.getController().removeSingleRoleFromMember(member, role).queue();
+        } catch (InsufficientPermissionException e) {
+            log.error("Can't remove role {} due to missing permission {}", role, e.getPermission(), e);
+        } catch (HierarchyException e) {
+            log.error("Can't remove role {} due to hierarchy issue", role, e);
+        }
+    }
+
     @CheckReturnValue
     public CompletionStage<Message> sendMessage(MessageChannel channel, Message message) {
         return channel.sendMessage(message).submit();

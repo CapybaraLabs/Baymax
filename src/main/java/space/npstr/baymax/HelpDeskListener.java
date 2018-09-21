@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.config.properties.BaymaxConfig;
+import space.npstr.baymax.db.TemporaryRoleService;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -48,17 +49,19 @@ public class HelpDeskListener extends ListenerAdapter {
     private final Models models;
     private final BaymaxConfig baymaxConfig;
     private final RestActions restActions;
+    private final TemporaryRoleService temporaryRoleService;
 
     //channel id of the helpdesk <-> user id <-> ongoing dialogue
     private Map<Long, Cache<Long, UserDialogue>> helpDesksDialogues = new ConcurrentHashMap<>();
 
     public HelpDeskListener(EventWaiter eventWaiter, Models models, BaymaxConfig baymaxConfig,
-                            RestActions restActions) {
+                            RestActions restActions, TemporaryRoleService temporaryRoleService) {
 
         this.eventWaiter = eventWaiter;
         this.models = models;
         this.baymaxConfig = baymaxConfig;
         this.restActions = restActions;
+        this.temporaryRoleService = temporaryRoleService;
     }
 
     @Override
@@ -96,7 +99,7 @@ public class HelpDeskListener extends ListenerAdapter {
         userDialogues.get(event.getAuthor().getIdLong(),
                 userId -> {
                     var model = this.models.getModelByName(helpDesk.getModelName());
-                    return new UserDialogue(this.eventWaiter, model, event, this.restActions);
+                    return new UserDialogue(this.eventWaiter, model, event, this.restActions, this.temporaryRoleService);
                 });
     }
 

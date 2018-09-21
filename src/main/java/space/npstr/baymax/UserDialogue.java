@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.requests.RequestFuture;
+import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
 
@@ -51,13 +52,14 @@ public class UserDialogue {
     private final long userId;
     private final long channelId;
     private final RestActions restActions;
+    private final TemporaryRoleService temporaryRoleService;
     private List<Long> messagesToCleanUp = new ArrayList<>();
     @Nullable
     private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
     private boolean done = false;
 
     public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event,
-                        RestActions restActions) {
+                        RestActions restActions, TemporaryRoleService temporaryRoleService) {
 
         this.eventWaiter = eventWaiter;
         this.shardManager = event.getJDA().asBot().getShardManager();
@@ -65,6 +67,7 @@ public class UserDialogue {
         this.userId = event.getAuthor().getIdLong();
         this.channelId = event.getChannel().getIdLong();
         this.restActions = restActions;
+        this.temporaryRoleService = temporaryRoleService;
 
         this.messagesToCleanUp.add(event.getMessageIdLong());
 
@@ -114,6 +117,7 @@ public class UserDialogue {
         }
 
         this.restActions.assignRole(guild, member, role);
+        this.temporaryRoleService.setTemporaryRole(member.getUser(), role);
     }
 
     private void sendNode(Node node) {
