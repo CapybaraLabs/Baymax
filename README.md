@@ -147,6 +147,22 @@ And here is how it looks in chat:
   - [MIT License](http://www.opensource.org/licenses/mit-license.php)
   - [Maven Repository](https://mvnrepository.com/artifact/com.vdurmont/emoji-java)
 
+- **Guava**:
+  - [Source Code](https://github.com/google/guava)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - [Maven Repository](https://mvnrepository.com/artifact/com.google.guava/guava)
+
+- **SQLite JDBC Driver**:
+  - [Source Code](https://github.com/xerial/sqlite-jdbc)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - [Maven Repository](https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc)
+
+- **Flyway**:
+  - [Website](https://flywaydb.org/)
+  - [Source Code](https://github.com/flyway/flyway)
+  - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - [Maven Repository](https://mvnrepository.com/artifact/org.flywaydb/flyway-core)
+
 - **Spring Boot**:
   - [Website](https://spring.io/projects/spring-boot)
   - [Source Code](https://github.com/spring-projects/spring-boot)
