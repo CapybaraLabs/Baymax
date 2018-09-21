@@ -126,7 +126,7 @@ public class UserDialogue {
             TextChannel textChannel = textChannelOpt.get();
             textChannel.sendMessage(asMessage(node)).queue(message -> this.messagesToCleanUp.add(message.getIdLong()));
 
-            Optional.ofNullable(node.getRoleId()).ifPresent(aLong -> assignRole(textChannel, this.userId, aLong));
+            Optional.ofNullable(node.getRoleId()).ifPresent(roleId -> assignRole(textChannel, this.userId, roleId));
         } else {
             log.warn("Where did the channel {} go?", this.channelId);
         }
