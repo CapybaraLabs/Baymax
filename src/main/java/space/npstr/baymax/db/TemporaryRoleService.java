@@ -71,14 +71,37 @@ public class TemporaryRoleService {
                 .toInstant().toEpochMilli();
 
         //language=SQLite
-        String query = "INSERT INTO temporary_role VALUES(?, ?, ?, ?);";
+        String existsSql = "SELECT EXISTS(SELECT * FROM temporary_role WHERE user_id = ? AND role_id = ?);";
+
+        //language=SQLite
+        String insertSql = "INSERT INTO temporary_role VALUES(?, ?, ?, ?);";
+        //language=SQLite
+        String updateSql = "UPDATE temporary_role SET guild_id = ?, until = ? WHERE user_id = ? AND role_id = ?;";
 
         try (Connection connection = this.database.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
+            boolean exists;
+            try (PreparedStatement statement = connection.prepareStatement(existsSql)) {
                 statement.setLong(1, userId);
                 statement.setLong(2, roleId);
-                statement.setLong(3, guildId);
-                statement.setLong(4, until);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    exists = resultSet.getBoolean(1);
+                }
+
+            }
+            String query = exists ? updateSql : insertSql;
+
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                if (exists) {
+                    statement.setLong(1, guildId);
+                    statement.setLong(2, until);
+                    statement.setLong(3, userId);
+                    statement.setLong(4, roleId);
+                } else {
+                    statement.setLong(1, userId);
+                    statement.setLong(2, roleId);
+                    statement.setLong(3, guildId);
+                    statement.setLong(4, until);
+                }
                 statement.execute();
             }
         } catch (SQLException e) {
