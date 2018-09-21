@@ -4,7 +4,7 @@ ENV ENV docker
 
 WORKDIR /opt/baymax
 
-RUN touch /opt/baymax/baymax.sqlite
+RUN touch baymax.sqlite
 
 ENTRYPOINT ["java", "-Xmx256m", "-jar", "baymax.jar"]
 

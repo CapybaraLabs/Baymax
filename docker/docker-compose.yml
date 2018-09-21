@@ -3,7 +3,6 @@ services:
 
   bot:
     image: napstr/baymax:master
-    #image: napstr/baymax:master-arm64v8
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"

@@ -47,11 +47,8 @@ jobs:
         - IMAGE_TAG=$(echo ${TRAVIS_BRANCH} | sed -e 's/\//_/g')
         - echo $IMAGE_TAG
         - IMAGE_NAME=$DOCKER_USERNAME/baymax:$IMAGE_TAG
-        - docker run --rm --privileged multiarch/qemu-user-static:register
         - docker build -t "$IMAGE_NAME" -f docker/Dockerfile .
-        - docker build -t "$IMAGE_NAME-arm64v8" -f docker/Dockerfile.arm64v8 .
       after_success:
         - echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin
         - docker push $IMAGE_NAME
-        - docker push $IMAGE_NAME-arm64v8
         - docker logout
