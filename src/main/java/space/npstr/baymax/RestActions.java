@@ -32,6 +32,7 @@ import javax.annotation.CheckReturnValue;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 
 /**
  * Created by napster on 21.09.18.
@@ -66,7 +67,8 @@ public class RestActions {
 
     @CheckReturnValue
     public CompletionStage<Message> sendMessage(MessageChannel channel, Message message) {
-        return channel.sendMessage(message).submit();
+        return channel.sendMessage(message).submit()
+                .thenApply(Function.identity()); //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
     }
 
     @CheckReturnValue
@@ -80,6 +82,7 @@ public class RestActions {
     @CheckReturnValue
     private CompletionStage<List<Message>> fetchAllMessages(MessageHistory history) {
         return history.retrievePast(100).submit()
+                .thenApply(Function.identity()) //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
                 .thenCompose(
                         messages -> {
                             if (!messages.isEmpty()) {
