@@ -7,39 +7,94 @@ branches:
 - message: "I need help with the Aki Server"
   targetId: server-root
 
+
+### Bot stuff
+
 ---
 id: bot-root
-title: "You need help with the Aki Bot. What's wrong?"
+title: "You need help with Aki the bot. What's wrong?"
 branches:
-- message: "Something is broken"
+- message: "Something is broken."
   targetId: bot-broken
 - message: "I want to change a setting."
   targetId: bot-setting
+- message: "I have a question about Aki."
+  targetId: bot-question
 - message: "I have a suggestion."
   targetId: bot-suggestion
-- message: "None of the above."
+- message: "I have looked at **all** the options, and none of them helped me."
   targetId: support-role
-
----
-id: server-root
-title: "Please DM one of our Moderators."
 
 ---
 id: bot-broken
 title: "What about Aki is broken?"
 branches:
-- message: "Aki is offline"
-  targetId: bot-offline
-- message: "Aki isn't responding"
-  targetId: bot-not-responding
+- message: "Aki is not online."
+  targetId: bot-broken-not-online
+- message: "Aki isn't responding."
+  targetId: bot-broken-not-responding
+- message: "Aki is sending blank messages."
+  targetId: bot-broken-blank-messages
+- message: "Aki keeps asking for a vote, but I have voted already."
+  targetId: bot-broken-votes
+- message: "Something else is broken"
+  targetId: support-role
 
 ---
-id: bot-offline
-title: "If the bot is offline in your server, but is online in this server, your shard may be experiencing an outage. Please inform a support team member for further assistance."
+id: bot-broken-not-online
+title: "Is Aki present in your server at all?"
+branches:
+- message: "Aki is not present in my server."
+  targetId: bot-invite
+- message: "Aki is in my server, but is shown as offline."
+  targetId: bot-broken-offline
 
 ---
-id: bot-not-responding
+id: bot-invite
+title: "To add the bot to your own server, navigate to this link: <https://akibot.xyz/invite>"
+
+---
+id: bot-broken-offline
+title: "Please read <#473155871959023636> and pay attention to any pinned, as well as recent messages." # #bot-status
+branches:
+- message: "I found an explanation for the downtime in <#473155871959023636>" # #bot-status
+  targetId: root
+- message: "There is no announced or scheduled downtime for Aki to be found in <#473155871959023636>" # #bot-status
+  targetId: let-us-know
+
+---
+id: let-us-know
+title: "Please let us know about this in <#487957025012318218>." # #support
+roleId: 487925645989380108 # #support
+
+---
+id: bot-broken-not-responding
 title: "If Aki is not responding, did you maybe change the prefix? Say `@Aki#9694 prefix` to check Aki's current prefix."
+
+---
+id: bot-broken-blank-messages
+title: "If Aki is sending blank messages, then you do not have the `Link Preview` option enabled.\n
+In your Discord client, navigate to Settings > Text & Images and enable the option `Show website preview info from links pasted into chat`.\n
+https://imgur.com/a/5uoVsgl"
+
+---
+id: bot-broken-votes
+title: "Try this command: `!aki votecheck`. Did that help?"
+branches:
+- message: "Yes! Aki recognizes by vote now."
+  targetId: root
+- message: "No. Aki still says that I have not voted"
+  targetId: bot-broken-not-voted
+
+---
+id: bot-broken-not-voted
+title: "Make sure you are logged in with the exact same account on the website, as you are using in your Discord client.
+You can see your logged in account by going to <https://discordbots.org/me>."
+branches:
+- message: "Woops, I was logged into the wrong account. I have logged into the correct one and voted, and things are working."
+  targetId: root
+- message: "Nope, I am 100% sure that I am logged into the same account."
+  targetId: let-us-know
 
 ---
 id: bot-setting
@@ -50,20 +105,20 @@ branches:
 - message: "Turn reactions on or off"
   targetId: bot-setting-reactions
 - message: "The prefix"
-  targetId: bot-prefix
+  targetId: bot-setting-prefix
 - message: "Restrict it to a single channel"
   targetId: bot-setting-restrict
 
 ---
 id: bot-setting-language
-title: "Say `!aki lang` to start changing your preferred language."
+title: "Say `!aki lang` to start changing your preferred language. If you want to change the default language for the entire server, you can add `--guild` to the end of the command, like so: `!aki lang en --guild`"
 
 ---
 id: bot-setting-reactions
 title: "Say `!aki thonks disable / enable` to switch reaction on or off."
 
 ---
-id: bot-prefix
+id: bot-setting-prefix
 title: "Say `!aki prefix <new prefix>` to change Aki's prefix. Say `@Aki#9694 prefix reset` to reset Aki's prefix."
 
 ---
@@ -71,10 +126,96 @@ id: bot-setting-restrict
 title: "Use the Discord permissions to take away Akis write permissions for all the channels where it should not talk in."
 
 ---
+id: bot-question
+title: "What question do you have about the bot?"
+branches:
+- message: "How do I add a character to Aki?"
+  targetId: bot-question-add-character
+- message: "How do I add Aki to my server?"
+  targetId: bot-invite
+- message: "How do I continue my game after upvoting?"
+  targetId: bot-question-upvote-continue
+- message: "Why do I have to upvote to continue playing Aki past 20 questions?"
+  targetId: bot-question-upvote-why
+- message: "What is Evil Aki?"
+  targetId: bot-question-evil-aki
+
+---
+id: bot-question-add-character
+title: "The Aki bot runs off the Akinator database, so to add a character, you would need to add it there.\n
+Link: <http://akinator.com/>"
+
+---
+id: bot-question-upvote-continue
+title: "Once you've upvoted, you should receive a DM from Aki confirming that he received your upvote. At that point, you can continue your game.\n
+- If you're unable to, type `!aki votecheck` to run a manual check for your vote.\n
+- If Aki can't find your vote, make sure you're logged into the same account on the browser version of Discord."
+
+---
+id: bot-question-upvote-why
+title: "Contrary to popular belief, Aki does not run on thin air. It runs on servers and time invested. Servers cost money; a lot more money than you think servers would cost. The time it takes to ensure everything works and looks nice is far more complicated than others may believe.\n
+\n
+These are your options:\n
+- Support the bot's upkeep by becoming a patron: <https://www.patreon.com/napster>\n
+- Upvote the bot every day.\n
+- Don't use it."
+
+---
+id: bot-question-evil-aki
+title: "Evil Aki is the evil version of Aki. Duh.\n
+It's actually a debug/test bot to test changes and new features before committing them to the actual bot."
+
+---
 id: bot-suggestion
 title: "We don't take any suggestions currently."
 
+
+### Server stuff
+
+---
+id: server-root
+title: "You need help with the Aki Server. What's wrong?"
+branches:
+- message: "Someone from this server sent me ads or inappropriate messages in my private messages."
+  targetId: report-user
+- message: "Someone is breaking the rules!"
+  targetId: report-user
+- message: "I can't type in one of the topic channels (art, gaming, etc). How do I get access?"
+  targetId: topic-key
+- message: "I can't set or change my nick. How can I change my nick in this place?"
+  targetId: change-nick
+- message: "I want to advertise my community / How do I post in <#486479857732157441>?" # #sponsors
+  targetId: sponsors
+- message: "I want to join staff / become a moderator."
+  targetId: join-staff
+- message: "I have looked at **all** the options, and none of them helped me."
+  targetId: support-role
+
+---
+id: report-user
+title: "Please report this in <#380426950818398208>, if possible including screenshots." # #support
+roleId: 487925645989380108 # #support
+
+---
+id: topic-key
+title: "Ask any staff member to get an access key role for the topic channels (art, gaming, etc)."
+
+---
+id: change-nick
+title: "Be more active by participating in our general or topic channels. Over time, you will gain a role that gives you the permission to set and change your nick."
+
+---
+id: sponsors
+title: "We are happy to promote those communities that significantly support the Aki bot.\n
+Sign up for the sponsor tier at our Patreon <https://www.patreon.com/napster>, and you will get access to post in <#486479857732157441>." # #sponsors
+
+---
+id: join-staff
+title: "To join our staff, show some activity and maturity in our chats. We value meaningful and positive contributions to our community,
+and will take notice of that and contact you. Alternatively, about every six months, we may open staff applications. Keep an eye out for
+that in <#472461981199237140> (we won't be pinging)." # #server-news
+
 ---
 id: support-role
-title: "Explain your problem to one of our helpers in <#487925562300694531>."
-roleId: 487925645989380108
+title: "Please explain your problem to one of our helpers in <#380426950818398208>." # #support
+roleId: 487925645989380108 # #support
