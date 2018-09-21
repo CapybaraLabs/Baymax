@@ -25,8 +25,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.requests.RequestFuture;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
@@ -52,17 +50,21 @@ public class UserDialogue {
     private final Map<String, Node> model;
     private final long userId;
     private final long channelId;
+    private final RestActions restActions;
     private List<Long> messagesToCleanUp = new ArrayList<>();
     @Nullable
     private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
     private boolean done = false;
 
-    public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event) {
+    public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event,
+                        RestActions restActions) {
+
         this.eventWaiter = eventWaiter;
         this.shardManager = event.getJDA().asBot().getShardManager();
         this.model = model;
         this.userId = event.getAuthor().getIdLong();
         this.channelId = event.getChannel().getIdLong();
+        this.restActions = restActions;
 
         this.messagesToCleanUp.add(event.getMessageIdLong());
 
@@ -97,7 +99,7 @@ public class UserDialogue {
         return Optional.ofNullable(this.shardManager.getTextChannelById(this.channelId));
     }
 
-    private void assignRole(TextChannel textChannel, long userId, long roleId) {
+    private void assignRole(TextChannel textChannel, long roleId) {
         Guild guild = textChannel.getGuild();
         Role role = guild.getRoleById(roleId);
         if (role == null) {
@@ -105,28 +107,28 @@ public class UserDialogue {
             return;
         }
 
-        Member member = guild.getMemberById(userId);
+        Member member = guild.getMemberById(this.userId);
         if (member == null) {
-            log.warn("No member found for user {}", userId);
+            log.warn("No member found for user {}", this.userId);
             return;
         }
 
-        try {
-            guild.getController().addSingleRoleToMember(member, role).queue();
-        } catch (InsufficientPermissionException e) {
-            log.error("Can't assign role {} due to missing permission {}", role, e.getPermission(), e);
-        } catch (HierarchyException e) {
-            log.error("Can't assign role {} due to hierarchy issue", role, e);
-        }
+        this.restActions.assignRole(guild, member, role);
     }
 
     private void sendNode(Node node) {
         Optional<TextChannel> textChannelOpt = getTextChannel();
         if (textChannelOpt.isPresent()) {
             TextChannel textChannel = textChannelOpt.get();
-            textChannel.sendMessage(asMessage(node)).queue(message -> this.messagesToCleanUp.add(message.getIdLong()));
+            this.restActions.sendMessage(textChannel, asMessage(node))
+                    .thenAccept(message -> this.messagesToCleanUp.add(message.getIdLong()))
+                    .whenComplete((__, t) -> {
+                        if (t != null) {
+                            log.error("Failed to send message", t);
+                        }
+                    });
 
-            Optional.ofNullable(node.getRoleId()).ifPresent(roleId -> assignRole(textChannel, this.userId, roleId));
+            Optional.ofNullable(node.getRoleId()).ifPresent(roleId -> assignRole(textChannel, roleId));
         } else {
             log.warn("Where did the channel {} go?", this.channelId);
         }
