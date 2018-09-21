@@ -14,6 +14,7 @@ services:
       - ./models:/opt/baymax/models:ro
       - ./logs:/opt/baymax/logs
       - ./logs/gc:/opt/baymax/logs/gc
+      - ./baymax.sqlite:/opt/baymax/baymax.sqlite
     stop_grace_period: 60s
     entrypoint:
       - java

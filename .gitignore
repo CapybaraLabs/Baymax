@@ -140,3 +140,6 @@ gradle-app.setting
 baymax.yaml
 application.yaml
 logs/
+*.sqlite
+dataSources
+.ideaDataSources

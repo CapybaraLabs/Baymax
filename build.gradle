@@ -54,6 +54,9 @@ ext {
     emojiVersion            = '4.0.0'
     guavaVersion            = '26.0-jre'
 
+    sqliteVersion           = '3.23.1'
+    flywayVersion           = '5.1.4'
+
     jUnitVersion            = '5.2.0'
 
     //@formatter:on
@@ -86,6 +89,8 @@ dependencies {
     compile group: 'com.github.ben-manes.caffeine', name:'caffeine',    version: caffeineVersion    // caches
     compile group: 'com.vdurmont',          name: 'emoji-java',         version: emojiVersion       // emoji lib
     compile group: 'com.google.guava',      name: 'guava',              version: guavaVersion       // stuff...like memoizers
+    compile group: 'org.xerial',            name: 'sqlite-jdbc',        version: sqliteVersion      // db
+    compile group: 'org.flywaydb',          name: 'flyway-core',        version: flywayVersion      // migrations
 
     //spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter',                 version: springBootVersion
