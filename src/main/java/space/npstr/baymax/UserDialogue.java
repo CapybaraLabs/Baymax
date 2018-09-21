@@ -106,6 +106,10 @@ public class UserDialogue {
         }
 
         Member member = guild.getMemberById(userId);
+        if (member == null) {
+            log.warn("No member found for user {}", userId);
+            return;
+        }
 
         try {
             guild.getController().addSingleRoleToMember(member, role).queue();
