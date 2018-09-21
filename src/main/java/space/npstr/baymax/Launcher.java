@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * Created by napster on 05.09.18.
@@ -78,10 +79,10 @@ public class Launcher implements ApplicationRunner {
         app.run(args);
     }
 
-    public Launcher(ShardManager shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
+    public Launcher(ShardManagerHolder shardManagerHolder, ScheduledThreadPoolExecutor jdaThreadPool) {
         this.shutdownHook = new Thread(() -> {
             try {
-                shutdown(shardManager, jdaThreadPool);
+                shutdown(shardManagerHolder, jdaThreadPool);
             } catch (Exception e) {
                 log.error("Uncaught exception in shutdown hook", e);
             } finally {
@@ -131,12 +132,12 @@ public class Launcher implements ApplicationRunner {
         return false;
     }
 
-    private void shutdown(ShardManager shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
+    private void shutdown(Supplier<ShardManager> shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
         //okHttpClient claims that a shutdown isn't necessary
 
         //shutdown JDA
         log.info("Shutting down shards");
-        shardManager.shutdown();
+        shardManager.get().shutdown();
 
         //shutdown executors
         log.info("Shutting down jda thread pool");

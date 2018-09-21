@@ -52,6 +52,7 @@ ext {
     snakeYamlVersion        = '1.19' //1.20+ incompatible with spring boot 2.0.4
     caffeineVersion         = '2.6.2'
     emojiVersion            = '4.0.0'
+    guavaVersion            = '26.0-jre'
 
     jUnitVersion            = '5.2.0'
 
@@ -84,6 +85,7 @@ dependencies {
     compile group: 'org.yaml',              name: 'snakeyaml',          version: snakeYamlVersion   // yaml file parsing
     compile group: 'com.github.ben-manes.caffeine', name:'caffeine',    version: caffeineVersion    // caches
     compile group: 'com.vdurmont',          name: 'emoji-java',         version: emojiVersion       // emoji lib
+    compile group: 'com.google.guava',      name: 'guava',              version: guavaVersion       // stuff...like memoizers
 
     //spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter',                 version: springBootVersion
