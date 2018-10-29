@@ -13,14 +13,18 @@ Rarely are well-qualified users willing to do this frustrating, repetitive
 and more often than not ungrateful chore for longer than a short time.
 
 Luckily, many of the bad parts can be automated with little effort,
-leading to a **faster** and **higher quality** support experience.
+leading to a **faster** and **higher quality** support experience for end users.
 
-Baymax aims to alleviate the following problem areas by means of automation:
+By means of automation, Baymax aims to alleviate the following problem areas from a supporter's point of view:
 - Answering the same questions again and again
 - Dealing with users who don't state their questions / bug reports / suggestions until someone talks to them
 - Dealing with users who are unwilling to read the existing FAQ
 - Dealing with users who demand immediate attention by pinging random staff members
 - Random spam in a support channel that is read by humans, unnecessarily demanding their attention 
+
+And from a users point of view:
+- Receiving immediate help & support for most issues instead of waiting for other humans to show up
+- All the information in one place, instead of having to look though FAQs and guides
 
 ### How?
 Baymax uses a simple, yaml based model to define a help desk model as a 
@@ -33,7 +37,7 @@ A sane model has the following properties:
 - Each defined node can be reached from the `root` node
 
 
-A node may optionally have a role id. Baymax will assign that role id to the user who reaches that node.
+A node may optionally have a role id. Baymax will assign that role id to the user who reaches that node, and remove it again after 3 hours.
 
 A basic example:
 
