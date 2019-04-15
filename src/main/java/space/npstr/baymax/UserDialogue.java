@@ -151,12 +151,17 @@ public class UserDialogue {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
 
-        Optional<Integer> numberOpt = this.emojisNumbersParser.emojisToNumber(contentRaw);
-        if (numberOpt.isEmpty()) {
-            sendNode(currentNode); //todo better message?
-            return;
-        }
-        int numberPicked = numberOpt.get();
+        int numberPicked;
+        try {
+            numberPicked = Integer.parseInt(contentRaw);
+        } catch (NumberFormatException e) {
+            Optional<Integer> numberOpt = this.emojisNumbersParser.emojisToNumber(contentRaw);
+            if (numberOpt.isEmpty()) {
+                sendNode(currentNode); //todo better message?
+                return;
+            }
+            numberPicked = numberOpt.get();
+        } 
 
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
