@@ -143,7 +143,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
     private boolean isStaff(Member member) {
         return member.getRoles().stream()
-                .anyMatch(role -> role.getIdLong() == this.baymaxConfig.getStaffRoleId());
+                .anyMatch(role -> this.baymaxConfig.getStaffRoleIds().contains(role.getIdLong()));
     }
 
     private Cache<Long, UserDialogue> createUserDialogueCache() {

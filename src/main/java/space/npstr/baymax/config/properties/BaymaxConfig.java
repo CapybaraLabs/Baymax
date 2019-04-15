@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by napster on 05.09.18.
@@ -31,7 +32,7 @@ import java.util.List;
 public class BaymaxConfig {
 
     private String discordToken = "";
-    private long staffRoleId;
+    private Set<Long> staffRoleIds = Collections.emptySet();
     private List<HelpDesk> helpDesks = Collections.emptyList();
 
     public String getDiscordToken() {
@@ -42,12 +43,12 @@ public class BaymaxConfig {
         this.discordToken = discordToken;
     }
 
-    public long getStaffRoleId() {
-        return this.staffRoleId;
+    public Set<Long> getStaffRoleIds() {
+        return this.staffRoleIds;
     }
 
-    public void setStaffRoleId(long staffRoleId) {
-        this.staffRoleId = staffRoleId;
+    public void setStaffRoleIds(Set<Long> staffRoleIds) {
+        this.staffRoleIds = staffRoleIds;
     }
 
     public List<HelpDesk> getHelpDesks() {

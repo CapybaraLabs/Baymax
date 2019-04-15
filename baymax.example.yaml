@@ -21,7 +21,9 @@ sentry:
 
 baymax:
   discord-token:    ""
-  staff-role-id:    479601466110377984
+  staff-role-ids:
+    - 479601466110377984
+    - 242377373947920384
   help-desks:
   - channel-id:     487005342014636032
     model-name:     aki
