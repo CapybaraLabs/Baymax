@@ -53,6 +53,7 @@ public class UserDialogue {
     private final long channelId;
     private final RestActions restActions;
     private final TemporaryRoleService temporaryRoleService;
+    private final EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
     private List<Long> messagesToCleanUp = new ArrayList<>();
     @Nullable
     private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
@@ -150,14 +151,13 @@ public class UserDialogue {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
 
-        int numberPicked;
-        try {
-            numberPicked = Integer.parseInt(contentRaw);
-        } catch (NumberFormatException e) {
+        Optional<Integer> numberOpt = this.emojisNumbersParser.emojisToNumber(contentRaw);
+        if (numberOpt.isEmpty()) {
             sendNode(currentNode); //todo better message?
             return;
         }
-        
+        int numberPicked = numberOpt.get();
+
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
         if (numberPicked < 0 || numberPicked > currentNode.getBranches().size()) {
@@ -183,55 +183,21 @@ public class UserDialogue {
 
     public static Message asMessage(Node node) {
         MessageBuilder mb = new MessageBuilder();
+        EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
 
         mb.append("**").append(node.getTitle()).append("**\n\n");
         int bb = 1;
         for (Branch branch : node.getBranches()) {
             mb
-                    .append(numberAsEmojis(bb++))
+                    .append(emojisNumbersParser.numberAsEmojis(bb++))
                     .append(" ")
                     .append(branch.getMessage())
                     .append("\n");
         }
         if (!"root".equals(node.getId())) {
-            mb.append(numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
+            mb.append(emojisNumbersParser.numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
         }
 
         return mb.build();
-    }
-
-    private static String numberAsEmojis(int number) {
-        String numberAsString = Integer.toString(number);
-        return numberAsString.chars()
-                .mapToObj(c -> digitToEmoji((char) c))
-                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                .toString();
-    }
-
-    private static String digitToEmoji(char digit) {
-        switch (digit) {
-            case '0':
-                return Emojis.get("zero");
-            case '1':
-                return Emojis.get("one");
-            case '2':
-                return Emojis.get("two");
-            case '3':
-                return Emojis.get("three");
-            case '4':
-                return Emojis.get("four");
-            case '5':
-                return Emojis.get("five");
-            case '6':
-                return Emojis.get("six");
-            case '7':
-                return Emojis.get("seven");
-            case '8':
-                return Emojis.get("eight");
-            case '9':
-                return Emojis.get("nine");
-            default:
-                throw new RuntimeException(digit + " is not a digit");
-        }
     }
 }
