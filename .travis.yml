@@ -33,14 +33,14 @@ jobs:
   fast_finish: true
   include:
     - stage: sonar
-      jdk: openjdk10
+      jdk: openjdk11
       before_script:
       #for full sonar cloud blame information
         - git fetch --depth=10000
       script:
         - ./gradlew sonarqube -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=napstr-github -Dsonar.login=$SONAR_TOKEN
     - stage: build & publish
-      jdk: openjdk10
+      jdk: openjdk11
       script:
         - java -Xmx32m -version
         - ./gradlew build --info

@@ -17,13 +17,21 @@ services:
     stop_grace_period: 60s
     entrypoint:
       - java
+# Common JVM Options:
+      - -Xms256m
       - -Xmx256m
-      - -XX:+HeapDumpOnOutOfMemoryError
       - -XX:HeapDumpPath=emergencydump.hprof
-      - -Xlog:gc*:logs/gc/gc-%t.log::filesize=1g
-      - -XX:+UseG1GC
-      - -XX:+ParallelRefProcEnabled
-      - -XX:+UseStringDeduplication
+# Hotspot Options:
+      #- -XX:+HeapDumpOnOutOfMemoryError
+      #- -Xlog:gc*:logs/gc/gc-%t.log::filesize=1g
+      #- -XX:+UseG1GC
+      #- -XX:+ParallelRefProcEnabled
+      #- -XX:+UseStringDeduplication
+# Open J9 Options:
+      - -XX:+HeapDumpOnOutOfMemory
+      - -Xgcpolicy:balanced
+      - -Xverbosegclog:logs/gc/gc-%Y-%m-%d_%H-%M-%S.xml
+# The Jar
       - -jar
       - baymax.jar
 

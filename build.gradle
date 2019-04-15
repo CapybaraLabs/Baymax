@@ -39,7 +39,7 @@ ext {
     moduleName = 'baymax'
 
     //@formatter:off
-    javaVersion             = '10'
+    javaVersion             = JavaVersion.VERSION_11
 
     springBootVersion       = "${springBootVersion}"
 
@@ -61,8 +61,7 @@ ext {
     //@formatter:on
 }
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+sourceCompatibility = targetCompatibility = javaVersion
 
 repositories {
     jcenter()
