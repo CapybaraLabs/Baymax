@@ -19,7 +19,6 @@ package space.npstr.baymax.db;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
-import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.springframework.stereotype.Component;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
@@ -52,13 +51,13 @@ public class Database {
     }
 
     private void migrate(DataSource dataSource) {
-        Flyway flyway = new Flyway(new FluentConfiguration()
+        Flyway flyway = new Flyway(Flyway.configure()
                 .baselineOnMigrate(true)
                 .baselineVersion(MigrationVersion.fromVersion("0"))
                 .baselineDescription("Base Migration")
                 .locations("db/migrations")
+            .dataSource(dataSource)
         );
-        flyway.setDataSource(dataSource);
         flyway.migrate();
     }
 }

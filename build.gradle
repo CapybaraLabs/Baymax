@@ -5,10 +5,10 @@ buildscript {
         //@formatter:off
 
         //plugin versions
-        gradleGitVersion        = '1.5.2'
-        springBootVersion       = '2.0.4.RELEASE'
-        aptVersion              = '0.18'
-        sonarqubeVersion        = '2.6.2'
+        gradleGitVersion        = '2.0.0'
+        springBootVersion       = '2.1.4.RELEASE'
+        aptVersion              = '0.21'
+        sonarqubeVersion        = '2.7'
 
         //@formatter:on
     }
@@ -43,20 +43,20 @@ ext {
 
     springBootVersion       = "${springBootVersion}"
 
-    jdaVersion              = '3.7.1_417'
+    jdaVersion              = '3.8.3_463'
     logbackVersion          = '1.2.3'
-    sentryVersion           = '1.7.7'
-    okhttpVersion           = '3.11.0'
+    sentryVersion           = '1.7.22'
+    okhttpVersion           = '3.14.1'
     annotationsVersion      = '0.0.1'
-    snakeYamlVersion        = '1.19' //1.20+ incompatible with spring boot 2.0.4
-    caffeineVersion         = '2.6.2'
+    snakeYamlVersion        = '1.24'
+    caffeineVersion         = '2.7.0'
     emojiVersion            = '4.0.0'
-    guavaVersion            = '26.0-jre'
+    guavaVersion            = '27.1-jre'
 
-    sqliteVersion           = '3.23.1'
-    flywayVersion           = '5.1.4'
+    sqliteVersion           = '3.27.2.1'
+    flywayVersion           = '5.2.4'
 
-    jUnitVersion            = '5.2.0'
+    jUnitVersion            = '5.4.1'
 
     //@formatter:on
 }
