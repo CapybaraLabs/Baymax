@@ -157,6 +157,8 @@ public class UserDialogue {
             sendNode(currentNode); //todo better message?
             return;
         }
+        
+        numberPicked--; //correct for shown index starting at 1 instead of 0
 
         if (numberPicked < 0 || numberPicked > currentNode.getBranches().size()) {
             sendNode(currentNode); //todo better message?
@@ -183,7 +185,7 @@ public class UserDialogue {
         MessageBuilder mb = new MessageBuilder();
 
         mb.append("**").append(node.getTitle()).append("**\n\n");
-        int bb = 0;
+        int bb = 1;
         for (Branch branch : node.getBranches()) {
             mb
                     .append(numberAsEmojis(bb++))
