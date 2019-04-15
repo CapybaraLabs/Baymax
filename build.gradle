@@ -40,7 +40,6 @@ ext {
 
     //@formatter:off
     javaVersion             = '10'
-    gradleWrapperVersion    = '4.9'
 
     springBootVersion       = "${springBootVersion}"
 
@@ -101,12 +100,6 @@ dependencies {
     testRuntime group: 'org.junit.jupiter',    name: 'junit-jupiter-engine',    version: jUnitVersion
 
     //@formatter:on
-}
-
-wrapper {
-    gradleVersion = gradleWrapperVersion
-    //noinspection UnnecessaryQualifiedReference
-    distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(JavaCompile) {
