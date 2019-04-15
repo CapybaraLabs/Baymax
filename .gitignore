@@ -143,3 +143,4 @@ logs/
 *.sqlite
 dataSources
 .ideaDataSources
+.idea
