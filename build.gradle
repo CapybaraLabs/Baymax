@@ -79,29 +79,25 @@ configurations {
 }
 
 dependencies {
-    //@formatter:off
-
-    compile group: 'net.dv8tion',           name: 'JDA',                version: jdaVersion         // discord API
-    compile group: 'ch.qos.logback',        name: 'logback-classic',    version: logbackVersion     // logging framework
-    compile group: 'io.sentry',             name: 'sentry-logback',     version: sentryVersion      // error aggregation
-    compile group: 'com.squareup.okhttp3',  name: 'okhttp',             version: okhttpVersion      // http client
-    compile group: 'space.npstr',           name: 'annotations',        version: annotationsVersion // moar annotations
-    compile group: 'org.yaml',              name: 'snakeyaml',          version: snakeYamlVersion   // yaml file parsing
-    compile group: 'com.github.ben-manes.caffeine', name:'caffeine',    version: caffeineVersion    // caches
-    compile group: 'com.vdurmont',          name: 'emoji-java',         version: emojiVersion       // emoji lib
-    compile group: 'com.google.guava',      name: 'guava',              version: guavaVersion       // stuff...like memoizers
-    compile group: 'org.xerial',            name: 'sqlite-jdbc',        version: sqliteVersion      // db
-    compile group: 'org.flywaydb',          name: 'flyway-core',        version: flywayVersion      // migrations
+    implementation "net.dv8tion:JDA:$jdaVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "io.sentry:sentry-logback:$sentryVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "space.npstr:annotations:$annotationsVersion"
+    implementation "org.yaml:snakeyaml:$snakeYamlVersion"
+    implementation "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
+    implementation "com.vdurmont:emoji-java:$emojiVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "org.xerial:sqlite-jdbc:$sqliteVersion"
+    implementation "org.flywaydb:flyway-core:$flywayVersion"
 
     //spring
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter',                 version: springBootVersion
-    compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: springBootVersion
+    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
 
     //testing
-    testCompile group: 'org.junit.jupiter',    name: 'junit-jupiter-api',       version: jUnitVersion
-    testRuntime group: 'org.junit.jupiter',    name: 'junit-jupiter-engine',    version: jUnitVersion
-
-    //@formatter:on
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
 }
 
 dependencyUpdates.resolutionStrategy {
