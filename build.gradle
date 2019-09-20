@@ -29,6 +29,10 @@ buildscript {
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeVersion}"
         classpath "com.github.ben-manes:gradle-versions-plugin:${versionsVersion}"
     }
+
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
 }
 
 apply plugin: 'idea'
@@ -57,6 +61,7 @@ configurations {
 
 dependencies {
     implementation platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+    testRuntime platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
 
     implementation "net.dv8tion:JDA:$jdaVersion"
     implementation "ch.qos.logback:logback-classic"
@@ -79,17 +84,27 @@ dependencies {
 }
 
 dependencyUpdates.resolutionStrategy {
-    componentSelection { rules ->
-        rules.all { ComponentSelection selection ->
-            boolean rejected = [
-                    'alpha', 'beta', 'rc', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'preview',
-            ].any {
-                q -> selection.candidate.version.toLowerCase().contains(q)
-            }
-            if (rejected) {
-                selection.reject('Not a release')
+    componentSelection properReleasesOnly()
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+// ./gradlew resolveAndLockAll --write-locks
+task resolveAndLockAll {
+    doFirst {
+        assert gradle.startParameter.writeDependencyLocks
+    }
+    doLast {
+        configurations.all {
+            resolutionStrategy {
+                componentSelection properReleasesOnly()
             }
         }
+        configurations
+                .findAll { it.canBeResolved }
+                .each { it.resolve() }
     }
 }
 
@@ -145,5 +160,20 @@ processResources {
                 "env.BUILD_NUMBER"  : (System.getenv('CI') ? System.getenv('BUILD_NUMBER') : 'DEV'),
                 "env.BUILD_TIME"    : System.currentTimeMillis() + ''
         ]
+    }
+}
+
+static def properReleasesOnly() {
+    return { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = [
+                    'alpha', 'beta', 'rc', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'preview',
+            ].any {
+                q -> selection.candidate.version.toLowerCase().contains(q)
+            }
+            if (rejected) {
+                selection.reject('Not a release')
+            }
+        }
     }
 }
