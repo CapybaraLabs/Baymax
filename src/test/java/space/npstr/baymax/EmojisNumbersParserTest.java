@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 class EmojisNumbersParserTest {
 
@@ -17,7 +20,7 @@ class EmojisNumbersParserTest {
 
         Optional<Integer> result = this.parser.emojisToNumber(fortyTwo);
         assertTrue(result.isPresent());
-        assertEquals(42, result.get());
+        assertEquals(42, (int) result.get());
     }
 
     @Test
@@ -26,7 +29,7 @@ class EmojisNumbersParserTest {
 
         Optional<Integer> result = this.parser.emojisToNumber(value);
         assertTrue(result.isPresent());
-        assertEquals(Integer.MAX_VALUE, result.get());
+        assertEquals(Integer.MAX_VALUE, (int) result.get());
     }
 
     @Test
@@ -35,7 +38,7 @@ class EmojisNumbersParserTest {
 
         Optional<Integer> result = this.parser.emojisToNumber(value);
         assertTrue(result.isPresent());
-        assertEquals(0, result.get());
+        assertEquals(0, (int) result.get());
     }
 
     @Test

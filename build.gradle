@@ -11,6 +11,13 @@ buildscript {
         sonarqubeVersion        = '2.7'
         versionsVersion         = '0.25.0'
 
+        jdaVersion              = '3.8.3_463'
+        sentryVersion           = '1.7.22'
+        okhttpVersion           = '3.14.1'
+        annotationsVersion      = '0.0.1'
+        emojiVersion            = '4.0.0'
+        guavaVersion            = '27.1-jre'
+
         //@formatter:on
     }
     repositories {
@@ -38,33 +45,8 @@ apply plugin: 'com.github.ben-manes.versions'
 
 group 'space.npstr.baymax'
 version '0.0.1-SNAPSHOT'
-ext {
-    moduleName = 'baymax'
 
-    //@formatter:off
-    javaVersion             = JavaVersion.VERSION_11
-
-    springBootVersion       = "${springBootVersion}"
-
-    jdaVersion              = '3.8.3_463'
-    logbackVersion          = '1.2.3'
-    sentryVersion           = '1.7.22'
-    okhttpVersion           = '3.14.1'
-    annotationsVersion      = '0.0.1'
-    snakeYamlVersion        = '1.24'
-    caffeineVersion         = '2.7.0'
-    emojiVersion            = '4.0.0'
-    guavaVersion            = '27.1-jre'
-
-    sqliteVersion           = '3.27.2.1'
-    flywayVersion           = '5.2.4'
-
-    jUnitVersion            = '5.4.1'
-
-    //@formatter:on
-}
-
-sourceCompatibility = targetCompatibility = javaVersion
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     jcenter()
@@ -79,25 +61,26 @@ configurations {
 }
 
 dependencies {
+    implementation platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+
     implementation "net.dv8tion:JDA:$jdaVersion"
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "ch.qos.logback:logback-classic"
     implementation "io.sentry:sentry-logback:$sentryVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
     implementation "space.npstr:annotations:$annotationsVersion"
-    implementation "org.yaml:snakeyaml:$snakeYamlVersion"
-    implementation "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
+    implementation "org.yaml:snakeyaml"
+    implementation "com.github.ben-manes.caffeine:caffeine"
     implementation "com.vdurmont:emoji-java:$emojiVersion"
     implementation "com.google.guava:guava:$guavaVersion"
-    implementation "org.xerial:sqlite-jdbc:$sqliteVersion"
-    implementation "org.flywaydb:flyway-core:$flywayVersion"
+    implementation "org.xerial:sqlite-jdbc"
+    implementation "org.flywaydb:flyway-core"
 
     //spring
-    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter"
 
     //testing
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine"
 }
 
 dependencyUpdates.resolutionStrategy {
@@ -163,7 +146,7 @@ processResources {
         filter ReplaceTokens, tokens: [
                 "project.version"   : project.version,
                 "project.groupId"   : project.group,
-                "project.artifactId": project.ext.moduleName,
+                "project.artifactId": project.name,
                 "env.BUILD_NUMBER"  : (System.getenv('CI') ? System.getenv('BUILD_NUMBER') : 'DEV'),
                 "env.BUILD_TIME"    : System.currentTimeMillis() + ''
         ]
