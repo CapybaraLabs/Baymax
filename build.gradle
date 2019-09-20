@@ -5,17 +5,17 @@ buildscript {
         //@formatter:off
 
         //plugin versions
-        gradleGitVersion        = '2.0.0'
-        springBootVersion       = '2.1.4.RELEASE'
-        sonarqubeVersion        = '2.7'
+        gradleGitVersion        = '2.1.0'
+        springBootVersion       = '2.1.8.RELEASE'
+        sonarqubeVersion        = '2.7.1'
         versionsVersion         = '0.25.0'
 
-        jdaVersion              = '3.8.3_463'
-        sentryVersion           = '1.7.22'
-        okhttpVersion           = '3.14.1'
-        annotationsVersion      = '0.0.1'
-        emojiVersion            = '4.0.0'
-        guavaVersion            = '27.1-jre'
+        jdaVersion              = '3.8.3_464'
+        sentryVersion           = '1.7.27'
+        okhttpVersion           = '3.14.3'
+        annotationsVersion      = '0.0.2'
+        emojiVersion            = '5.1.1'
+        guavaVersion            = '28.1-jre'
 
         //@formatter:on
     }
@@ -84,7 +84,7 @@ dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
             boolean rejected = [
-                    'alpha', 'beta', 'rc', 'm1', 'm2', 'm3', 'preview',
+                    'alpha', 'beta', 'rc', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'preview',
             ].any {
                 q -> selection.candidate.version.toLowerCase().contains(q)
             }
