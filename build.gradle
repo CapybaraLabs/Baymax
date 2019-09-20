@@ -5,17 +5,17 @@ buildscript {
         //@formatter:off
 
         //plugin versions
-        gradleGitVersion        = '2.1.0'
-        springBootVersion       = '2.1.8.RELEASE'
-        sonarqubeVersion        = '2.7.1'
-        versionsVersion         = '0.25.0'
+        gradleGitVersion        = '2.+'
+        springBootVersion       = '[2.1.8.RELEASE, 2.2['
+        sonarqubeVersion        = '2.+'
+        versionsVersion         = '0.+'
 
-        jdaVersion              = '3.8.3_464'
-        sentryVersion           = '1.7.27'
-        okhttpVersion           = '3.14.3'
-        annotationsVersion      = '0.0.2'
-        emojiVersion            = '5.1.1'
-        guavaVersion            = '28.1-jre'
+        jdaVersion              = '[3.8.3_464, 4.0['
+        sentryVersion           = '[1.7.27, 2.0['
+        okhttpVersion           = '[3.14.3, 4.0['
+        annotationsVersion      = '[0.0.2, 0.1['
+        emojiVersion            = '[5.1.1, 6.0['
+        guavaVersion            = '[28.1-jre, 29['
 
         //@formatter:on
     }
