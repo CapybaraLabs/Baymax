@@ -7,7 +7,6 @@ buildscript {
         //plugin versions
         gradleGitVersion        = '2.0.0'
         springBootVersion       = '2.1.4.RELEASE'
-        aptVersion              = '0.21'
         sonarqubeVersion        = '2.7'
         versionsVersion         = '0.25.0'
 
@@ -28,7 +27,6 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:${gradleGitVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:${aptVersion}"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeVersion}"
         classpath "com.github.ben-manes:gradle-versions-plugin:${versionsVersion}"
     }
@@ -38,7 +36,6 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'com.gorylenko.gradle-git-properties'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'net.ltgt.apt'
 apply plugin: 'jacoco'
 apply plugin: 'org.sonarqube'
 apply plugin: 'com.github.ben-manes.versions'
