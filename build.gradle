@@ -20,8 +20,7 @@ buildscript {
         //@formatter:on
     }
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/' }
-        maven { url 'http://repo.spring.io/plugins-release' }
+        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
@@ -48,7 +47,6 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 repositories {
     jcenter()
     mavenCentral()
-    mavenLocal()
     maven { url 'https://jitpack.io' }
 }
 
