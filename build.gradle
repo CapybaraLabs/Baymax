@@ -115,7 +115,7 @@ bootRun {
 }
 
 bootJar {
-    archiveName = "baymax.jar"
+    archiveFileName.set("baymax.jar")
     doLast {
         copy {
             from 'build/libs/baymax.jar'
