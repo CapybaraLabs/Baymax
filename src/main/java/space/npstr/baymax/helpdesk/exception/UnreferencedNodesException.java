@@ -36,9 +36,7 @@ public class UnreferencedNodesException extends MalformedModelException {
 
     @Override
     public String getMessage() {
-        String nodes = String.join(", ",
-                this.unreferencedNodes.stream().map(Node::getId).collect(Collectors.toList())
-        );
+        String nodes = this.unreferencedNodes.stream().map(Node::getId).collect(Collectors.joining(", "));
         return "Nodes " + nodes + " have no reference leading to them from the root node.";
     }
 }

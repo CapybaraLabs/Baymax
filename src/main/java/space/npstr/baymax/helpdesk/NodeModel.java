@@ -30,11 +30,10 @@ public class NodeModel implements Node {
 
     private String title = "";
 
+    @Nullable
     private Long roleId = null;
 
     private List<BranchModel> branches = Collections.emptyList();
-
-    public NodeModel() {}
 
     @Override
     public String getId() {

@@ -57,7 +57,7 @@ public class ShardManagerConfiguration {
     @Bean(destroyMethod = "") //we manage the lifecycle ourselves tyvm, see shutdown hook in the launcher
     public ShardManager shardManager(BaymaxConfig baymaxConfig, OkHttpClient.Builder httpClientBuilder,
                                      ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
-                                     HelpDeskListener helpDeskListener) {
+                                     HelpDeskListener helpDeskListener) throws LoginException {
 
         Activity discordStatus = Activity.playing("with Aki");
 
@@ -73,12 +73,6 @@ public class ShardManagerConfiguration {
                 .setCallbackPool(jdaThreadPool, false)
                 .setDisabledCacheFlags(EnumSet.allOf(CacheFlag.class));
 
-        try {
-            return shardBuilder.build();
-        } catch (LoginException e) {
-            String message = "Could not login with provided token, probably invalid";
-            log.error(message, e);
-            throw new RuntimeException(message, e);
-        }
+        return shardBuilder.build();
     }
 }

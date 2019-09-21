@@ -49,6 +49,7 @@ public class Launcher implements ApplicationRunner {
     private volatile boolean shutdownHookAdded = false;
     private volatile boolean shutdownHookExecuted = false;
 
+    @SuppressWarnings("squid:S106") // CLI usage intended
     public static void main(String[] args) {
         //just post the info to the console
         if (args.length > 0 &&
@@ -154,8 +155,10 @@ public class Launcher implements ApplicationRunner {
     }
 
     private static String getVersionInfo() {
-        //copypasta'd from http://textart4u.blogspot.com/2014/10/disney-baymax-face-text-art-copy-paste.html
+        // deduplication of individual lines doesnt make any sense for ascii art
+        @SuppressWarnings("squid:S1192")
         String baymax
+                //copypasta'd from http://textart4u.blogspot.com/2014/10/disney-baymax-face-text-art-copy-paste.html
                 = "\t¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶\n"
                 + "\t¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶\n"
                 + "\t¶¶¶¶¶¶¶¶¶___________________¶¶¶¶¶¶¶¶¶\n"

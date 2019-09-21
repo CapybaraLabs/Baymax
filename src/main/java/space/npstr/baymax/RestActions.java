@@ -42,9 +42,6 @@ public class RestActions {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestActions.class);
 
-    public RestActions() {}
-
-
     public void assignRole(Guild guild, Member member, Role role) {
         try {
             guild.addRoleToMember(member, role).queue();
@@ -73,7 +70,6 @@ public class RestActions {
 
     @CheckReturnValue
     public CompletionStage<Void> purgeChannel(TextChannel channel) {
-        //noinspection SuspiciousToArrayCall
         return fetchAllMessages(channel.getHistory())
                 .thenApply(channel::purgeMessages)
                 .thenCompose(requestFutures -> CompletableFuture.allOf(requestFutures.toArray(new CompletableFuture[0])));

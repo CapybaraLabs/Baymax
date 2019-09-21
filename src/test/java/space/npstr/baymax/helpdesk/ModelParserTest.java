@@ -25,6 +25,7 @@ import space.npstr.baymax.helpdesk.exception.UnreferencedNodesException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,6 +115,6 @@ public class ModelParserTest {
 
     private String loadModelAsYamlString(String resourceName) throws IOException {
         InputStream fileStream = ModelParserTest.class.getClassLoader().getResourceAsStream(resourceName);
-        return new String(fileStream.readAllBytes());
+        return new String(Objects.requireNonNull(fileStream).readAllBytes());
     }
 }

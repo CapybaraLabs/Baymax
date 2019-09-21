@@ -47,7 +47,7 @@ public class HelpDeskListener extends ListenerAdapter {
     public static final int EXPIRE_MINUTES = 2;
 
     private final EventWaiter eventWaiter;
-    private final Models models;
+    private final ModelLoader modelLoader;
     private final BaymaxConfig baymaxConfig;
     private final RestActions restActions;
     private final TemporaryRoleService temporaryRoleService;
@@ -55,11 +55,11 @@ public class HelpDeskListener extends ListenerAdapter {
     //channel id of the helpdesk <-> user id <-> ongoing dialogue
     private Map<Long, Cache<Long, UserDialogue>> helpDesksDialogues = new ConcurrentHashMap<>();
 
-    public HelpDeskListener(EventWaiter eventWaiter, Models models, BaymaxConfig baymaxConfig,
+    public HelpDeskListener(EventWaiter eventWaiter, ModelLoader modelLoader, BaymaxConfig baymaxConfig,
                             RestActions restActions, TemporaryRoleService temporaryRoleService) {
 
         this.eventWaiter = eventWaiter;
-        this.models = models;
+        this.modelLoader = modelLoader;
         this.baymaxConfig = baymaxConfig;
         this.restActions = restActions;
         this.temporaryRoleService = temporaryRoleService;
@@ -103,7 +103,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
         userDialogues.get(event.getAuthor().getIdLong(),
                 userId -> {
-                    var model = this.models.getModelByName(helpDesk.getModelName());
+                    var model = this.modelLoader.getModelByName(helpDesk.getModelName());
                     return new UserDialogue(this.eventWaiter, model, event, this.restActions, this.temporaryRoleService);
                 });
     }
@@ -133,7 +133,7 @@ public class HelpDeskListener extends ListenerAdapter {
                         return null; //Void
                     })
                     .thenCompose(__ -> {
-                            var model = this.models.getModelByName(modelName);
+                        var model = this.modelLoader.getModelByName(modelName);
                         return this.restActions.sendMessage(channel, UserDialogue.asMessage(model.get("root")));
                     })
                     .whenComplete((__, t) -> {

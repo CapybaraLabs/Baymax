@@ -23,7 +23,6 @@ import space.npstr.baymax.helpdesk.exception.MissingTargetNodeException;
 import space.npstr.baymax.helpdesk.exception.NoRootNodeException;
 import space.npstr.baymax.helpdesk.exception.UnreferencedNodesException;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,6 @@ import java.util.Map;
  * Created by napster on 05.09.18.
  */
 public class ModelParser {
-
-    public ModelParser() {}
 
     public Map<String, Node> parse(String yaml) {
         Yaml snakeYaml = new Yaml(new Constructor(NodeModel.class));
@@ -52,7 +49,7 @@ public class ModelParser {
         //      1) Each node referenced by a branch exists
         //      2) All nodes are referenced from the root node
 
-        Map<String, Node> allNodes = Collections.unmodifiableMap(new HashMap<>(model));
+        Map<String, Node> allNodes = Map.copyOf(model);
         Map<String, Node> unreferencedNodes = new HashMap<>(model);
 
         Node rootNode = model.get("root");

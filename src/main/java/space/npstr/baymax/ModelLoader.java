@@ -33,13 +33,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by napster on 05.09.18.
  */
 @Component
-public class Models {
+public class ModelLoader {
 
     private final Map<String, Map<String, Node>> models = new ConcurrentHashMap<>();
 
     private final ModelParser modelParser = new ModelParser();
-
-    public Models() {}
 
     public Map<String, Node> getModelByName(String name) {
         return this.models.computeIfAbsent(name, this::loadModelByName);
@@ -57,8 +55,7 @@ public class Models {
         if (!modelFile.exists() || !modelFile.canRead()) {
             throw new RuntimeException("Failed to find or read model file " + fileName);
         }
-        try {
-            InputStream fileStream = new FileInputStream(modelFile);
+        try (InputStream fileStream = new FileInputStream(modelFile)) {
             return new String(fileStream.readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException("Failed to load model " + fileName, e);

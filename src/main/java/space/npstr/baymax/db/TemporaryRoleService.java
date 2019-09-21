@@ -109,6 +109,7 @@ public class TemporaryRoleService {
         }
     }
 
+    @SuppressWarnings("squid:S135") // the while loop is perfectly readable
     private void cleanUp() {
         //avoid runnign this when were not ready
         if (this.shardManager.get().getShardCache().stream()

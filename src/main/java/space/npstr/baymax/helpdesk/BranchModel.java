@@ -26,8 +26,6 @@ public class BranchModel implements Branch {
 
     private String targetId = "";
 
-    public BranchModel() {}
-
     @Override
     public String getMessage() {
         return this.message;

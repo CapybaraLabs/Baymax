@@ -29,7 +29,6 @@ import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,9 +55,8 @@ public class UserDialogue {
     private final RestActions restActions;
     private final TemporaryRoleService temporaryRoleService;
     private final EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
-    private List<Long> messagesToCleanUp = new ArrayList<>();
-    @Nullable
-    private volatile EventWaiter.WaitingEvent<GuildMessageReceivedEvent> waitingEvent;
+    private final List<Long> messagesToCleanUp = new ArrayList<>();
+    private final AtomicReference<EventWaiter.WaitingEvent<GuildMessageReceivedEvent>> waitingEvent = new AtomicReference<>();
     private boolean done = false;
 
     public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event,
@@ -77,7 +76,7 @@ public class UserDialogue {
     }
 
     public synchronized void done() {
-        var we = this.waitingEvent;
+        var we = this.waitingEvent.get();
         if (we != null) {
             we.cancel();
         }
@@ -89,7 +88,7 @@ public class UserDialogue {
 
         getTextChannel().ifPresent(textChannel -> {
             List<String> messageIdsAsStrings = this.messagesToCleanUp.stream()
-                    .map(id -> Long.toString(id))
+                    .map(Number::toString)
                     .collect(Collectors.toList());
             List<CompletableFuture<Void>> requestFutures = textChannel.purgeMessagesById(messageIdsAsStrings);
             requestFutures.forEach(f -> f.whenComplete((__, t) -> {
@@ -139,13 +138,13 @@ public class UserDialogue {
             log.warn("Where did the channel {} go?", this.channelId);
         }
 
-        this.waitingEvent = this.eventWaiter.waitForEvent(
+        this.waitingEvent.set(this.eventWaiter.waitForEvent(
                 GuildMessageReceivedEvent.class,
                 messageOfThisUser(),
                 event -> this.parseUserInput(event, node),
                 HelpDeskListener.EXPIRE_MINUTES, TimeUnit.MINUTES,
                 this::done
-        );
+        ));
     }
 
     private void parseUserInput(GuildMessageReceivedEvent event, Node currentNode) {
@@ -162,7 +161,7 @@ public class UserDialogue {
                 return;
             }
             numberPicked = numberOpt.get();
-        } 
+        }
 
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
