@@ -20,18 +20,19 @@ package space.npstr.baymax;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.db.TemporaryRoleService;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -85,7 +86,11 @@ public class HelpDeskListener extends ListenerAdapter {
         var userDialogues = this.helpDesksDialogues.computeIfAbsent(
                 helpDesk.getChannelId(), channelId -> this.createUserDialogueCache()
         );
-        if (isStaff(event.getMember())) {
+        Member member = event.getMember();
+        if (member == null) {
+            return;
+        }
+        if (isStaff(member)) {
             if (event.getMessage().isMentioned(event.getJDA().getSelfUser())) {
                 if (event.getMessage().getContentRaw().toLowerCase().contains("init")) {
                     userDialogues.invalidateAll();
@@ -109,7 +114,7 @@ public class HelpDeskListener extends ListenerAdapter {
         //1. Clean up the channel
         //2. Post the root message
 
-        ShardManager shardManager = event.getJDA().asBot().getShardManager();
+        ShardManager shardManager = Objects.requireNonNull(event.getJDA().getShardManager(), "Shard manager required");
         for (BaymaxConfig.HelpDesk helpDesk : this.baymaxConfig.getHelpDesks()) {
             TextChannel channel = shardManager.getTextChannelById(helpDesk.getChannelId());
             if (channel == null) {

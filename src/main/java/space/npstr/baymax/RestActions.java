@@ -17,15 +17,15 @@
 
 package space.npstr.baymax;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.CheckReturnValue;
@@ -47,7 +47,7 @@ public class RestActions {
 
     public void assignRole(Guild guild, Member member, Role role) {
         try {
-            guild.getController().addSingleRoleToMember(member, role).queue();
+            guild.addRoleToMember(member, role).queue();
         } catch (InsufficientPermissionException e) {
             log.error("Can't assign role {} due to missing permission {}", role, e.getPermission(), e);
         } catch (HierarchyException e) {
@@ -57,7 +57,7 @@ public class RestActions {
 
     public void removeRole(Guild guild, Member member, Role role) {
         try {
-            guild.getController().removeSingleRoleFromMember(member, role).queue();
+            guild.removeRoleFromMember(member, role).queue();
         } catch (InsufficientPermissionException e) {
             log.error("Can't remove role {} due to missing permission {}", role, e.getPermission(), e);
         } catch (HierarchyException e) {

@@ -10,7 +10,7 @@ buildscript {
         sonarqubeVersion        = '2.+'
         versionsVersion         = '0.+'
 
-        jdaVersion              = '[3.8.3_464, 4.0['
+        jdaVersion              = '[4.0.0_46, 4.1['
         sentryVersion           = '[1.7.27, 2.0['
         okhttpVersion           = '[3.14.3, 4.0['
         annotationsVersion      = '[0.0.2, 0.1['

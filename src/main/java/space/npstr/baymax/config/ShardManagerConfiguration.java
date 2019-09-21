@@ -17,10 +17,10 @@
 
 package space.npstr.baymax.config;
 
-import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,11 +59,11 @@ public class ShardManagerConfiguration {
                                      ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
                                      HelpDeskListener helpDeskListener) {
 
-        Game discordStatus = Game.playing("with Aki");
+        Activity discordStatus = Activity.playing("with Aki");
 
         DefaultShardManagerBuilder shardBuilder = new DefaultShardManagerBuilder()
                 .setToken(baymaxConfig.getDiscordToken())
-                .setGame(discordStatus)
+                .setActivity(discordStatus)
                 .addEventListeners(eventWaiter)
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
@@ -71,7 +71,7 @@ public class ShardManagerConfiguration {
                 .setEnableShutdownHook(false)
                 .setRateLimitPool(jdaThreadPool, false)
                 .setCallbackPool(jdaThreadPool, false)
-                .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME, CacheFlag.VOICE_STATE));
+                .setDisabledCacheFlags(EnumSet.allOf(CacheFlag.class));
 
         try {
             return shardBuilder.build();

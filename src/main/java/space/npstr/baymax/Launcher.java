@@ -17,8 +17,8 @@
 
 package space.npstr.baymax;
 
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDAInfo;
+import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;

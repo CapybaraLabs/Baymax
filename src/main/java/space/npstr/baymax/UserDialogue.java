@@ -17,15 +17,14 @@
 
 package space.npstr.baymax;
 
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.requests.RequestFuture;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Branch;
 import space.npstr.baymax.helpdesk.Node;
@@ -34,7 +33,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class UserDialogue {
                         RestActions restActions, TemporaryRoleService temporaryRoleService) {
 
         this.eventWaiter = eventWaiter;
-        this.shardManager = event.getJDA().asBot().getShardManager();
+        this.shardManager = Objects.requireNonNull(event.getJDA().getShardManager(), "Shard Manager required");
         this.model = model;
         this.userId = event.getAuthor().getIdLong();
         this.channelId = event.getChannel().getIdLong();
@@ -90,7 +91,7 @@ public class UserDialogue {
             List<String> messageIdsAsStrings = this.messagesToCleanUp.stream()
                     .map(id -> Long.toString(id))
                     .collect(Collectors.toList());
-            List<RequestFuture<Void>> requestFutures = textChannel.purgeMessagesById(messageIdsAsStrings);
+            List<CompletableFuture<Void>> requestFutures = textChannel.purgeMessagesById(messageIdsAsStrings);
             requestFutures.forEach(f -> f.whenComplete((__, t) -> {
                 if (t != null) {
                     log.error("Failed to purge messages for user {} in channel {}", this.userId, this.channelId, t);

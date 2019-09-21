@@ -18,7 +18,7 @@
 package space.npstr.baymax;
 
 import com.google.common.base.Suppliers;
-import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.aop.framework.Advised;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

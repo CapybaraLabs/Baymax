@@ -17,8 +17,8 @@
 
 package space.npstr.baymax;
 
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.hooks.EventListener;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -51,8 +51,8 @@ public class EventWaiter implements EventListener {
     private final ScheduledExecutorService single;
 
     //These stateful collections are only threadsafe when modified though the single executor
-    private final List<WaitingEvent<? extends Event>> toRemove = new ArrayList<>();
-    private final HashMap<Class<? extends Event>, Set<EventWaiter.WaitingEvent<? extends Event>>> waitingEvents;
+    private final List<WaitingEvent<? extends GenericEvent>> toRemove = new ArrayList<>();
+    private final HashMap<Class<? extends GenericEvent>, Set<EventWaiter.WaitingEvent<? extends GenericEvent>>> waitingEvents;
 
     public EventWaiter(ScheduledThreadPoolExecutor jdaThreadPool) {
         this.waitingEvents = new HashMap<>();
@@ -60,9 +60,10 @@ public class EventWaiter implements EventListener {
         this.single = new ScheduledThreadPoolExecutor(1);
     }
 
-    public <T extends Event> EventWaiter.WaitingEvent<T> waitForEvent(Class<T> classType, Predicate<T> condition,
-                                                                      Consumer<T> action, long timeout, TimeUnit unit,
-                                                                      Runnable timeoutAction) {
+    public <T extends GenericEvent> EventWaiter.WaitingEvent<T> waitForEvent(
+            Class<T> classType, Predicate<T> condition, Consumer<T> action, long timeout, TimeUnit unit,
+            Runnable timeoutAction
+    ) {
 
         EventWaiter.WaitingEvent<T> we = new EventWaiter.WaitingEvent<>(condition, action);
 
@@ -87,7 +88,7 @@ public class EventWaiter implements EventListener {
     }
 
     @Override
-    public final void onEvent(Event event) {
+    public final void onEvent(GenericEvent event) {
         Class cc = event.getClass();
 
         // Runs at least once for the fired Event, at most
@@ -98,7 +99,7 @@ public class EventWaiter implements EventListener {
             Class clazz = cc;
             if (this.waitingEvents.get(clazz) != null) {
                 this.single.execute(() -> {
-                    Set<WaitingEvent<? extends Event>> set = this.waitingEvents.get(clazz);
+                    Set<WaitingEvent<? extends GenericEvent>> set = this.waitingEvents.get(clazz);
                     @SuppressWarnings("unchecked") Predicate<WaitingEvent> filter = we -> we.attempt(event);
                     set.stream().filter(filter).forEach(this.toRemove::add);
                     set.removeAll(this.toRemove);
@@ -114,7 +115,7 @@ public class EventWaiter implements EventListener {
         }
     }
 
-    public class WaitingEvent<T extends Event> {
+    public class WaitingEvent<T extends GenericEvent> {
         final Predicate<T> condition;
         final Consumer<T> action;
 
