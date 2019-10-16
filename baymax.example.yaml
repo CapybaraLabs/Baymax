@@ -27,3 +27,4 @@ baymax:
   help-desks:
   - channel-id:     487005342014636032
     model-name:     aki
+    model-uri:      https://raw.githubusercontent.com/napstr/Baymax/master/models/aki.yaml

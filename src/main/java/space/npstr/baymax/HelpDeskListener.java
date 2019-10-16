@@ -20,7 +20,9 @@ package space.npstr.baymax;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -29,10 +31,14 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.db.TemporaryRoleService;
+import space.npstr.baymax.helpdesk.Node;
+import space.npstr.baymax.helpdesk.exception.MalformedModelException;
 
 import javax.annotation.Nullable;
+import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -70,15 +76,16 @@ public class HelpDeskListener extends ListenerAdapter {
         if (event.getAuthor().isBot()) {
             return;
         }
-        if (!event.getChannel().canTalk()) {
+        TextChannel channel = event.getChannel();
+        if (!channel.canTalk()) {
             return;
         }
 
         var helpDeskOpt = this.baymaxConfig.getHelpDesks().stream()
-                .filter(helpDesk -> helpDesk.getChannelId() == event.getChannel().getIdLong())
+                .filter(helpDesk -> helpDesk.getChannelId() == channel.getIdLong())
                 .findAny();
 
-        if (!helpDeskOpt.isPresent()) {
+        if (helpDeskOpt.isEmpty()) {
             return;
         }
 
@@ -92,10 +99,30 @@ public class HelpDeskListener extends ListenerAdapter {
         }
         if (isStaff(member)) {
             if (event.getMessage().isMentioned(event.getJDA().getSelfUser())) {
-                if (event.getMessage().getContentRaw().toLowerCase().contains("init")) {
+                String content = event.getMessage().getContentRaw().toLowerCase();
+                if (content.contains("init")) {
                     userDialogues.invalidateAll();
                     userDialogues.cleanUp();
-                    init(event.getChannel(), helpDesk.getModelName());
+                    init(channel, helpDesk.getModelName(), helpDesk.getModelUri());
+                    return;
+                } else if (content.contains("reload")) {
+                    try {
+                        var reloadedModel = this.modelLoader.attemptReload(helpDesk.getModelName(), helpDesk.getModelUri());
+                        userDialogues.invalidateAll();
+                        userDialogues.cleanUp();
+                        init(channel, reloadedModel);
+                    } catch (MalformedModelException e) {
+                        Message message = new MessageBuilder().append("Failed to load model due to: **")
+                                .append(e.getMessage())
+                                .append("**")
+                                .build();
+                        this.restActions.sendMessage(channel, message)
+                                .whenComplete((__, t) -> {
+                                    if (t != null) {
+                                        log.error("Failed to reply in channel {}", channel, t);
+                                    }
+                                });
+                    }
                     return;
                 }
             }
@@ -103,7 +130,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
         userDialogues.get(event.getAuthor().getIdLong(),
                 userId -> {
-                    var model = this.modelLoader.getModelByName(helpDesk.getModelName());
+                    var model = this.modelLoader.getModel(helpDesk.getModelName(), helpDesk.getModelUri());
                     return new UserDialogue(this.eventWaiter, model, event, this.restActions, this.temporaryRoleService);
                 });
     }
@@ -121,24 +148,25 @@ public class HelpDeskListener extends ListenerAdapter {
                 log.warn("Failed to find and setup configured help desk channel {}", helpDesk.getChannelId());
                 return;
             }
-            init(channel, helpDesk.getModelName());
+            init(channel, helpDesk.getModelName(), helpDesk.getModelUri());
         }
     }
 
-    private void init(TextChannel channel, String modelName) {
+    private void init(TextChannel channel, String modelName, Optional<URI> modelUri) {
+        init(channel, this.modelLoader.getModel(modelName, modelUri));
+    }
+
+    private void init(TextChannel channel, Map<String, Node> model) {
         try {
             this.restActions.purgeChannel(channel)
                     .exceptionally(t -> {
-                        log.error("Failed to purge messages for init in channel {} for model {}", channel, modelName, t);
+                        log.error("Failed to purge messages for init in channel {}", channel, t);
                         return null; //Void
                     })
-                    .thenCompose(__ -> {
-                        var model = this.modelLoader.getModelByName(modelName);
-                        return this.restActions.sendMessage(channel, UserDialogue.asMessage(model.get("root")));
-                    })
+                    .thenCompose(__ -> this.restActions.sendMessage(channel, UserDialogue.asMessage(model.get("root"))))
                     .whenComplete((__, t) -> {
                         if (t != null) {
-                            log.error("Failed to send init message in channel {} for model {}", channel, modelName, t);
+                            log.error("Failed to send init message in channel {}", channel, t);
                         }
                     });
         } catch (Exception e) {

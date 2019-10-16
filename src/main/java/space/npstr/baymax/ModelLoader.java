@@ -17,16 +17,26 @@
 
 package space.npstr.baymax;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.helpdesk.ModelParser;
 import space.npstr.baymax.helpdesk.Node;
+import space.npstr.baymax.helpdesk.exception.MalformedModelException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,30 +45,80 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ModelLoader {
 
+    private static final Logger log = LoggerFactory.getLogger(ModelLoader.class);
+
     private final Map<String, Map<String, Node>> models = new ConcurrentHashMap<>();
 
     private final ModelParser modelParser = new ModelParser();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final Path tempDir;
 
-    public Map<String, Node> getModelByName(String name) {
-        return this.models.computeIfAbsent(name, this::loadModelByName);
+    public ModelLoader() throws IOException {
+        this.tempDir = Files.createTempDirectory("baymax_models");
+        this.tempDir.toFile().deleteOnExit();
     }
 
-    public Map<String, Node> loadModelByName(String name) {
-        String filePath = "models/" + name + ".yaml";
+    public Map<String, Node> getModel(String name, Optional<URI> uri) {
+        return this.models.computeIfAbsent(name, __ -> loadModel(name, uri));
+    }
+
+    /**
+     * @throws RuntimeException        if there is a general problem loading the model
+     * @throws MalformedModelException if there is a problem parsing the model
+     */
+    public Map<String, Node> attemptReload(String name, Optional<URI> uri) {
+        Map<String, Node> model = loadModel(name, uri);
+        this.models.put(name, model);
+        return model;
+    }
+
+    private Map<String, Node> loadModel(String name, Optional<URI> uri) {
+        String rawModel;
+        if (uri.isPresent()) {
+            try {
+                rawModel = loadModelFromUrl(name, uri.get());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to load model" + name + " from url " + uri, e);
+            }
+        } else {
+            String filePath = "models/" + name + ".yaml";
+            rawModel = loadModelAsYamlString(filePath);
+        }
+
         return Collections.unmodifiableMap(
-                this.modelParser.parse(loadModelAsYamlString(filePath))
+                this.modelParser.parse(rawModel)
         );
     }
 
+    public String loadModelFromUrl(String name, URI uri) throws IOException, InterruptedException {
+        Path tempFile = Files.createTempFile(tempDir, name, ".yaml");
+        tempFile.toFile().deleteOnExit();
+
+        HttpResponse.BodyHandler<Path> bodyHandler = HttpResponse.BodyHandlers.ofFile(tempFile);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(uri)
+                .build();
+        HttpResponse<Path> response = httpClient.send(request, bodyHandler);
+
+        log.debug("Fetched model {} from {} with status {} and saved to {}", name, uri, response.statusCode(), tempFile);
+
+        return loadModelAsYamlString(tempFile.toFile());
+    }
+
     private String loadModelAsYamlString(String fileName) {
-        File modelFile = new File(fileName);
+        return loadModelAsYamlString(new File(fileName));
+    }
+
+    private String loadModelAsYamlString(File modelFile) {
         if (!modelFile.exists() || !modelFile.canRead()) {
-            throw new RuntimeException("Failed to find or read model file " + fileName);
+            throw new RuntimeException("Failed to find or read model file " + modelFile.getName());
         }
         try (InputStream fileStream = new FileInputStream(modelFile)) {
             return new String(fileStream.readAllBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load model " + fileName, e);
+            throw new RuntimeException("Failed to load model " + modelFile.getName(), e);
         }
     }
 }

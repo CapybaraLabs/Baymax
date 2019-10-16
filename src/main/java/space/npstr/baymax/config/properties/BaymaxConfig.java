@@ -20,8 +20,10 @@ package space.npstr.baymax.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -63,6 +65,7 @@ public class BaymaxConfig {
 
         private long channelId;
         private String modelName = "";
+        private Optional<URI> modelUri = Optional.empty();
 
         public long getChannelId() {
             return this.channelId;
@@ -78,6 +81,14 @@ public class BaymaxConfig {
 
         public void setModelName(String modelName) {
             this.modelName = modelName;
+        }
+
+        public Optional<URI> getModelUri() {
+            return modelUri;
+        }
+
+        public void setModelUri(URI modelUri) {
+            this.modelUri = Optional.of(modelUri);
         }
     }
 }
