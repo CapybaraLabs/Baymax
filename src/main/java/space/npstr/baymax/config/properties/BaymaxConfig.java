@@ -34,6 +34,8 @@ import java.util.Set;
 public class BaymaxConfig {
 
     private String discordToken = "";
+    private int statusType = 0;
+    private String statusMessage = "";
     private Set<Long> staffRoleIds = Collections.emptySet();
     private List<HelpDesk> helpDesks = Collections.emptyList();
 
@@ -43,6 +45,22 @@ public class BaymaxConfig {
 
     public void setDiscordToken(String discordToken) {
         this.discordToken = discordToken;
+    }
+
+    public int getStatusType() {
+        return statusType;
+    }
+
+    public void setStatusType(int statusType) {
+        this.statusType = statusType;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
     public Set<Long> getStaffRoleIds() {

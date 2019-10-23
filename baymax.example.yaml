@@ -21,6 +21,8 @@ sentry:
 
 baymax:
   discord-token:    ""
+  status-type:      0          # 0 = "playing", 1 = "streaming", 2 = "listening"
+  status-message:   "a game"
   staff-role-ids:
     - 479601466110377984
     - 242377373947920384

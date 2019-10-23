@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import space.npstr.baymax.EventWaiter;
 import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
@@ -59,11 +60,8 @@ public class ShardManagerConfiguration {
                                      ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
                                      HelpDeskListener helpDeskListener) throws LoginException {
 
-        Activity discordStatus = Activity.playing("with Aki");
-
         DefaultShardManagerBuilder shardBuilder = new DefaultShardManagerBuilder()
                 .setToken(baymaxConfig.getDiscordToken())
-                .setActivity(discordStatus)
                 .addEventListeners(eventWaiter)
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
@@ -72,6 +70,13 @@ public class ShardManagerConfiguration {
                 .setRateLimitPool(jdaThreadPool, false)
                 .setCallbackPool(jdaThreadPool, false)
                 .setDisabledCacheFlags(EnumSet.allOf(CacheFlag.class));
+
+        String statusMessage = baymaxConfig.getStatusMessage();
+        if (!StringUtils.isEmpty(statusMessage)) {
+            Activity.ActivityType activityType = Activity.ActivityType.fromKey(baymaxConfig.getStatusType());
+            Activity discordStatus = Activity.of(activityType, statusMessage);
+            shardBuilder.setActivity(discordStatus);
+        }
 
         return shardBuilder.build();
     }
