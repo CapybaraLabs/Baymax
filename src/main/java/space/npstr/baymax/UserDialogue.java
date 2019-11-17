@@ -199,7 +199,9 @@ public class UserDialogue {
                     .append(branch.getMessage())
                     .append("\n");
         }
-        if (!"root".equals(node.getId())) {
+        if ("root".equals(node.getId())) {
+            mb.append("\n\n").append("Say a number to start.").append("\n");
+        } else {
             mb.append(emojisNumbersParser.numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
         }
 
