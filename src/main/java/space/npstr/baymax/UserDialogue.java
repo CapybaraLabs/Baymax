@@ -152,6 +152,7 @@ public class UserDialogue {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
         Node currentNode = currentNodeContext.getNode();
+        Optional<Node> previousNode = currentNodeContext.getPreviousNode();
 
         int numberPicked;
         try {
@@ -167,14 +168,28 @@ public class UserDialogue {
 
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
-        if (numberPicked < 0 || numberPicked > currentNode.getBranches().size()) {
+        // additional navigational numbers shown below the real numbers
+        // +1 = go back
+        // +2 = go to start
+        int goBack;
+        int goToStart;
+        goBack = goToStart = currentNode.getBranches().size();
+        if (previousNode.isPresent()) {
+            goToStart++;
+        }
+
+        if (numberPicked < 0 || numberPicked > goToStart) {
             sendNode(currentNodeContext); //todo better message?
             return;
         }
 
         Node nextNode;
-        if (numberPicked == currentNode.getBranches().size()) {
-            nextNode = this.model.get("root");
+        if (numberPicked == goToStart || numberPicked == goBack) {
+            if (numberPicked == goBack && previousNode.isPresent()) {
+                nextNode = previousNode.get();
+            } else {
+                nextNode = this.model.get("root");
+            }
         } else {
             Branch branch = currentNode.getBranches().get(numberPicked);
             nextNode = this.model.get(branch.getTargetId());
@@ -203,9 +218,14 @@ public class UserDialogue {
                     .append(branch.getMessage())
                     .append("\n");
         }
+        mb.append("\n");
         if ("root".equals(node.getId())) {
-            mb.append("\n\n").append("Say a number to start.").append("\n");
+            mb.append("Say a number to start.").append("\n");
         } else {
+            Optional<Node> previousNode = nodeContext.getPreviousNode();
+            if (previousNode.isPresent()) {
+                mb.append(emojisNumbersParser.numberAsEmojis(bb++)).append(" ").append("Go back one step.").append("\n");
+            }
             mb.append(emojisNumbersParser.numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
         }
 
