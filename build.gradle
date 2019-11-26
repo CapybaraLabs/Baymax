@@ -6,7 +6,7 @@ buildscript {
 
         //plugin versions
         gradleGitVersion        = '2.+'
-        springBootVersion       = '[2.1.8.RELEASE, 2.2['
+        springBootVersion       = '[2.2.1.RELEASE, 2.3['
         sonarqubeVersion        = '2.+'
         versionsVersion         = '0.+'
 
