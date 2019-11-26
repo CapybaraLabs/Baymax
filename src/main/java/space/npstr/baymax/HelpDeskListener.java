@@ -163,7 +163,11 @@ public class HelpDeskListener extends ListenerAdapter {
                         log.error("Failed to purge messages for init in channel {}", channel, t);
                         return null; //Void
                     })
-                    .thenCompose(__ -> this.restActions.sendMessage(channel, UserDialogue.asMessage(model.get("root"))))
+                    .thenCompose(__ -> {
+                        NodeContext nodeContext = new NodeContext(model.get("root"), Optional.empty());
+                        Message message = UserDialogue.asMessage(nodeContext);
+                        return this.restActions.sendMessage(channel, message);
+                    })
                     .whenComplete((__, t) -> {
                         if (t != null) {
                             log.error("Failed to send init message in channel {}", channel, t);

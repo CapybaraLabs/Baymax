@@ -72,7 +72,8 @@ public class UserDialogue {
 
         this.messagesToCleanUp.add(event.getMessageIdLong());
 
-        parseUserInput(event, model.get("root"));
+        NodeContext nodeContext = new NodeContext(model.get("root"), Optional.empty());
+        parseUserInput(event, nodeContext);
     }
 
     public synchronized void done() {
@@ -121,11 +122,11 @@ public class UserDialogue {
         this.temporaryRoleService.setTemporaryRole(member.getUser(), role);
     }
 
-    private void sendNode(Node node) {
+    private void sendNode(NodeContext nodeContext) {
         Optional<TextChannel> textChannelOpt = getTextChannel();
         if (textChannelOpt.isPresent()) {
             TextChannel textChannel = textChannelOpt.get();
-            this.restActions.sendMessage(textChannel, asMessage(node))
+            this.restActions.sendMessage(textChannel, asMessage(nodeContext))
                     .thenAccept(message -> this.messagesToCleanUp.add(message.getIdLong()))
                     .whenComplete((__, t) -> {
                         if (t != null) {
@@ -133,7 +134,7 @@ public class UserDialogue {
                         }
                     });
 
-            Optional.ofNullable(node.getRoleId()).ifPresent(roleId -> assignRole(textChannel, roleId));
+            Optional.ofNullable(nodeContext.getNode().getRoleId()).ifPresent(roleId -> assignRole(textChannel, roleId));
         } else {
             log.warn("Where did the channel {} go?", this.channelId);
         }
@@ -141,15 +142,16 @@ public class UserDialogue {
         this.waitingEvent.set(this.eventWaiter.waitForEvent(
                 GuildMessageReceivedEvent.class,
                 messageOfThisUser(),
-                event -> this.parseUserInput(event, node),
+                event -> this.parseUserInput(event, nodeContext),
                 HelpDeskListener.EXPIRE_MINUTES, TimeUnit.MINUTES,
                 this::done
         ));
     }
 
-    private void parseUserInput(GuildMessageReceivedEvent event, Node currentNode) {
+    private void parseUserInput(GuildMessageReceivedEvent event, NodeContext currentNodeContext) {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
+        Node currentNode = currentNodeContext.getNode();
 
         int numberPicked;
         try {
@@ -157,7 +159,7 @@ public class UserDialogue {
         } catch (NumberFormatException e) {
             Optional<Integer> numberOpt = this.emojisNumbersParser.emojisToNumber(contentRaw);
             if (numberOpt.isEmpty()) {
-                sendNode(currentNode); //todo better message?
+                sendNode(currentNodeContext); //todo better message?
                 return;
             }
             numberPicked = numberOpt.get();
@@ -166,7 +168,7 @@ public class UserDialogue {
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
         if (numberPicked < 0 || numberPicked > currentNode.getBranches().size()) {
-            sendNode(currentNode); //todo better message?
+            sendNode(currentNodeContext); //todo better message?
             return;
         }
 
@@ -177,7 +179,8 @@ public class UserDialogue {
             Branch branch = currentNode.getBranches().get(numberPicked);
             nextNode = this.model.get(branch.getTargetId());
         }
-        sendNode(nextNode);
+        NodeContext nextNodeContext = new NodeContext(nextNode, Optional.of(currentNode));
+        sendNode(nextNodeContext);
     }
 
     private Predicate<GuildMessageReceivedEvent> messageOfThisUser() {
@@ -186,9 +189,10 @@ public class UserDialogue {
                         && event.getChannel().getIdLong() == this.channelId;
     }
 
-    public static Message asMessage(Node node) {
+    public static Message asMessage(NodeContext nodeContext) {
         MessageBuilder mb = new MessageBuilder();
         EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
+        Node node = nodeContext.getNode();
 
         mb.append("**").append(node.getTitle()).append("**\n\n");
         int bb = 1;
