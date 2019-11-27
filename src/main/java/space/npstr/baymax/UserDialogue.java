@@ -152,7 +152,7 @@ public class UserDialogue {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
         Node currentNode = currentNodeContext.getNode();
-        Optional<Node> previousNode = currentNodeContext.getPreviousNode();
+        Optional<NodeContext> previousNodeContext = currentNodeContext.getPreviousNodeContext();
 
         int numberPicked;
         try {
@@ -174,7 +174,7 @@ public class UserDialogue {
         int goBack;
         int goToStart;
         goBack = goToStart = currentNode.getBranches().size();
-        if (previousNode.isPresent()) {
+        if (previousNodeContext.isPresent()) {
             goToStart++;
         }
 
@@ -183,18 +183,19 @@ public class UserDialogue {
             return;
         }
 
-        Node nextNode;
+        NodeContext nextNodeContext;
         if (numberPicked == goToStart || numberPicked == goBack) {
-            if (numberPicked == goBack && previousNode.isPresent()) {
-                nextNode = previousNode.get();
+            if (numberPicked == goBack && previousNodeContext.isPresent()) {
+                nextNodeContext = previousNodeContext.get();
             } else {
-                nextNode = this.model.get("root");
+                Node rootNode = this.model.get("root");
+                nextNodeContext = new NodeContext(rootNode, Optional.empty());
             }
         } else {
             Branch branch = currentNode.getBranches().get(numberPicked);
-            nextNode = this.model.get(branch.getTargetId());
+            Node nextNode = this.model.get(branch.getTargetId());
+            nextNodeContext = new NodeContext(nextNode, Optional.of(currentNodeContext));
         }
-        NodeContext nextNodeContext = new NodeContext(nextNode, Optional.of(currentNode));
         sendNode(nextNodeContext);
     }
 
@@ -222,8 +223,8 @@ public class UserDialogue {
         if ("root".equals(node.getId())) {
             mb.append("Say a number to start.").append("\n");
         } else {
-            Optional<Node> previousNode = nodeContext.getPreviousNode();
-            if (previousNode.isPresent()) {
+            Optional<NodeContext> previousNodeContext = nodeContext.getPreviousNodeContext();
+            if (previousNodeContext.isPresent()) {
                 mb.append(emojisNumbersParser.numberAsEmojis(bb++)).append(" ").append("Go back one step.").append("\n");
             }
             mb.append(emojisNumbersParser.numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");

@@ -10,18 +10,18 @@ import java.util.Optional;
 public class NodeContext {
 
     private final Node node;
-    private final Optional<Node> previousNode;
+    private final Optional<NodeContext> previousNodeContext;
 
-    public NodeContext(Node node, Optional<Node> previousNode) {
+    public NodeContext(Node node, Optional<NodeContext> previousNodeContext) {
         this.node = node;
-        this.previousNode = previousNode;
+        this.previousNodeContext = previousNodeContext;
     }
 
     public Node getNode() {
         return this.node;
     }
 
-    public Optional<Node> getPreviousNode() {
-        return this.previousNode;
+    public Optional<NodeContext> getPreviousNodeContext() {
+        return this.previousNodeContext;
     }
 }
