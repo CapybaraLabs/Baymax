@@ -168,24 +168,16 @@ public class UserDialogue {
 
         numberPicked--; //correct for shown index starting at 1 instead of 0
 
-        // additional navigational numbers shown below the real numbers
-        // +1 = go back
-        // +2 = go to start
-        int goBack;
-        int goToStart;
-        goBack = goToStart = currentNode.getBranches().size();
-        if (previousNodeContext.isPresent()) {
-            goToStart++;
-        }
+        int goBack = -1; //actually user entered 0
 
-        if (numberPicked < 0 || numberPicked > goToStart) {
+        if (numberPicked < goBack || numberPicked >= currentNode.getBranches().size()) {
             sendNode(currentNodeContext); //todo better message?
             return;
         }
 
         NodeContext nextNodeContext;
-        if (numberPicked == goToStart || numberPicked == goBack) {
-            if (numberPicked == goBack && previousNodeContext.isPresent()) {
+        if (numberPicked == goBack) {
+            if (previousNodeContext.isPresent()) {
                 nextNodeContext = previousNodeContext.get();
             } else {
                 Node rootNode = this.model.get("root");
@@ -223,11 +215,9 @@ public class UserDialogue {
         if ("root".equals(node.getId())) {
             mb.append("Say a number to start.").append("\n");
         } else {
-            Optional<NodeContext> previousNodeContext = nodeContext.getPreviousNodeContext();
-            if (previousNodeContext.isPresent()) {
-                mb.append(emojisNumbersParser.numberAsEmojis(bb++)).append(" ").append("Go back one step.").append("\n");
+            if (nodeContext.getPreviousNodeContext().isPresent()) {
+                mb.append(emojisNumbersParser.numberAsEmojis(0)).append(" ").append("Go back.").append("\n");
             }
-            mb.append(emojisNumbersParser.numberAsEmojis(bb)).append(" ").append("Go back to the start.").append("\n");
         }
 
         return mb.build();
