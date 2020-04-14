@@ -60,8 +60,8 @@ public class ShardManagerConfiguration {
                                      ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
                                      HelpDeskListener helpDeskListener) throws LoginException {
 
-        DefaultShardManagerBuilder shardBuilder = new DefaultShardManagerBuilder()
-                .setToken(baymaxConfig.getDiscordToken())
+        DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
+                .createDefault(baymaxConfig.getDiscordToken())
                 .addEventListeners(eventWaiter)
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
@@ -69,7 +69,7 @@ public class ShardManagerConfiguration {
                 .setEnableShutdownHook(false)
                 .setRateLimitPool(jdaThreadPool, false)
                 .setCallbackPool(jdaThreadPool, false)
-                .setDisabledCacheFlags(EnumSet.allOf(CacheFlag.class));
+                .disableCache(EnumSet.allOf(CacheFlag.class));
 
         String statusMessage = baymaxConfig.getStatusMessage();
         if (!StringUtils.isEmpty(statusMessage)) {
