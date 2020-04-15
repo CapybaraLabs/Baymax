@@ -18,8 +18,10 @@
 package space.npstr.baymax.config;
 
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +64,8 @@ public class ShardManagerConfiguration {
 
         DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
                 .createDefault(baymaxConfig.getDiscordToken())
+                .setChunkingFilter(ChunkingFilter.ALL) //we need to fetch members from the cache at several places
+                .enableIntents(GatewayIntent.GUILD_MEMBERS) //required for chunking
                 .addEventListeners(eventWaiter)
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
