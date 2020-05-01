@@ -20,6 +20,13 @@ package space.npstr.baymax;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import java.net.URI;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -29,18 +36,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.error.YAMLException;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Node;
 import space.npstr.baymax.helpdesk.exception.MalformedModelException;
-
-import javax.annotation.Nullable;
-import java.net.URI;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by napster on 05.09.18.
@@ -111,17 +111,17 @@ public class HelpDeskListener extends ListenerAdapter {
                         userDialogues.invalidateAll();
                         userDialogues.cleanUp();
                         init(channel, reloadedModel);
-                    } catch (MalformedModelException e) {
+                    } catch (MalformedModelException | YAMLException e) {
                         Message message = new MessageBuilder().append("Failed to load model due to: **")
-                                .append(e.getMessage())
-                                .append("**")
-                                .build();
+                            .append(e.getMessage())
+                            .append("**")
+                            .build();
                         this.restActions.sendMessage(channel, message)
-                                .whenComplete((__, t) -> {
-                                    if (t != null) {
-                                        log.error("Failed to reply in channel {}", channel, t);
-                                    }
-                                });
+                            .whenComplete((__, t) -> {
+                                if (t != null) {
+                                    log.error("Failed to reply in channel {}", channel, t);
+                                }
+                            });
                     }
                     return;
                 }
