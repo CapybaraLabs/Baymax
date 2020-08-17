@@ -6,11 +6,11 @@ buildscript {
 
         //plugin versions
         gradleGitVersion        = '2.+'
-        springBootVersion       = '[2.2.1.RELEASE, 2.3['
-        sonarqubeVersion        = '2.+'
+        springBootVersion       = '[2.3.3.RELEASE, 2.4['
+        sonarqubeVersion        = '3.+'
         versionsVersion         = '0.+'
 
-        jdaVersion              = '[4.1.1_136, 4.2['
+        jdaVersion              = '[4.2.0_192, 4.3['
         sentryVersion           = '[1.7.27, 2.0['
         annotationsVersion      = '[0.0.2, 0.1['
         emojiVersion            = '[5.1.1, 6.0['
