@@ -51,7 +51,7 @@ public class EventWaiter implements EventListener {
     private final ScheduledExecutorService single;
 
     //These stateful collections are only threadsafe when modified though the single executor
-    private final List<WaitingEvent<? extends GenericEvent>> toRemove = new ArrayList<>();
+    private final List<WaitingEvent<? extends GenericEvent>> toRemove = new ArrayList<>(); //reused object
     private final HashMap<Class<? extends GenericEvent>, Set<EventWaiter.WaitingEvent<? extends GenericEvent>>> waitingEvents;
 
     public EventWaiter(ScheduledThreadPoolExecutor jdaThreadPool) {
@@ -89,18 +89,18 @@ public class EventWaiter implements EventListener {
 
     @Override
     public final void onEvent(GenericEvent event) {
-        Class cc = event.getClass();
+        Class<?> cc = event.getClass();
 
         // Runs at least once for the fired Event, at most
         // once for each superclass (excluding Object) because
         // Class#getSuperclass() returns null when the superclass
         // is primitive, void, or (in this case) Object.
         while (cc != null && cc != Object.class) {
-            Class clazz = cc;
+            Class<?> clazz = cc;
             if (this.waitingEvents.get(clazz) != null) {
                 this.single.execute(() -> {
                     Set<WaitingEvent<? extends GenericEvent>> set = this.waitingEvents.get(clazz);
-                    @SuppressWarnings("unchecked") Predicate<WaitingEvent> filter = we -> we.attempt(event);
+                    @SuppressWarnings({"unchecked", "rawtypes", "java:S3740"}) Predicate<WaitingEvent> filter = we -> we.attempt(event);
                     set.stream().filter(filter).forEach(this.toRemove::add);
                     set.removeAll(this.toRemove);
                     this.toRemove.clear();
