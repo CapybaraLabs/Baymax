@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import space.npstr.baymax.EventWaiter;
 import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
@@ -76,7 +76,7 @@ public class ShardManagerConfiguration {
                 .disableCache(EnumSet.allOf(CacheFlag.class));
 
         String statusMessage = baymaxConfig.getStatusMessage();
-        if (!StringUtils.isEmpty(statusMessage)) {
+        if (!ObjectUtils.isEmpty(statusMessage)) {
             Activity.ActivityType activityType = Activity.ActivityType.fromKey(baymaxConfig.getStatusType());
             Activity discordStatus = Activity.of(activityType, statusMessage);
             shardBuilder.setActivity(discordStatus);
