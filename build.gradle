@@ -11,7 +11,7 @@ buildscript {
         versionsVersion         = '0.+'
 
         jdaVersion              = '[4.2.0_192, 4.3['
-        sentryVersion           = '[3.0.0, 4.0['
+        sentryVersion           = '[4.3.0, 5.0['
         annotationsVersion      = '[0.0.2, 0.1['
         emojiVersion            = '[5.1.1, 6.0['
         guavaVersion            = '[30.0-jre, 31['
