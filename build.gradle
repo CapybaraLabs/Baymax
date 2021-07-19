@@ -6,12 +6,12 @@ buildscript {
 
         //plugin versions
         gradleGitVersion        = '2.+'
-        springBootVersion       = '[2.4.2.RELEASE, 2.5['
+        springBootVersion       = '[2.5.2, 2.6['
         sonarqubeVersion        = '3.+'
         versionsVersion         = '0.+'
 
-        jdaVersion              = '[4.2.0_192, 4.3['
-        sentryVersion           = '[4.3.0, 5.0['
+        jdaVersion              = '[4.3.0_297, 4.4['
+        sentryVersion           = '[5.0.1, 6.0['
         annotationsVersion      = '[0.0.2, 0.1['
         emojiVersion            = '[5.1.1, 6.0['
         guavaVersion            = '[30.0-jre, 31['
@@ -48,7 +48,11 @@ version '0.0.1-SNAPSHOT'
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
-    jcenter()
+    maven {
+        url 'https://m2.dv8tion.net/releases'
+        content { includeModule("net.dv8tion", "JDA") }
+        content { includeGroup("club.minnced") }
+    }
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
