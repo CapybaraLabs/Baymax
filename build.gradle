@@ -14,7 +14,7 @@ buildscript {
         sentryVersion           = '[5.0.1, 6.0['
         annotationsVersion      = '[0.0.2, 0.1['
         emojiVersion            = '[5.1.1, 6.0['
-        guavaVersion            = '[30.0-jre, 31['
+        guavaVersion            = '[31.0.1-jre, 32['
 
         //@formatter:on
     }
