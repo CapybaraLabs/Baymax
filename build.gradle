@@ -45,7 +45,12 @@ apply plugin: 'com.github.ben-manes.versions'
 group 'space.npstr.baymax'
 version '0.0.1-SNAPSHOT'
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.ADOPTOPENJDK
+    }
+}
 
 repositories {
     maven {

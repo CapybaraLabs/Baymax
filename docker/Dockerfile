@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
+FROM eclipse-temurin:17-jdk
 MAINTAINER napster@npstr.space
 
 ENV ENV docker
