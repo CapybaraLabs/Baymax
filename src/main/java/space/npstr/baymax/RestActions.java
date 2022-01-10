@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Dennis Neufeld
+ * Copyright (C) 2018-2022 Dennis Neufeld
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,9 +29,11 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.CheckReturnValue;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -66,6 +68,12 @@ public class RestActions {
     public CompletionStage<Message> sendMessage(MessageChannel channel, Message message) {
         return channel.sendMessage(message).submit()
                 .thenApply(Function.identity()); //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
+    }
+
+    @CheckReturnValue
+    public CompletionStage<Void> deleteMessageAfter(Message message, Duration after) {
+        return message.delete()
+                .submitAfter(after.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @CheckReturnValue

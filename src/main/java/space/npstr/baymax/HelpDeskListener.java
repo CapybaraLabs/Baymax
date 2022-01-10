@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Dennis Neufeld
+ * Copyright (C) 2018-2022 Dennis Neufeld
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,6 +21,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,9 +74,6 @@ public class HelpDeskListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) {
-            return;
-        }
         TextChannel channel = event.getChannel();
         if (!channel.canTalk()) {
             return;
@@ -86,6 +84,19 @@ public class HelpDeskListener extends ListenerAdapter {
                 .findAny();
 
         if (helpDeskOpt.isEmpty()) {
+            return;
+        }
+        if (event.getAuthor().isBot()) {
+            if (event.getAuthor().getIdLong() == event.getJDA().getSelfUser().getIdLong()) {
+                return;
+            }
+
+            restActions.deleteMessageAfter(event.getMessage(), Duration.ofSeconds(5))
+                .whenComplete((__, t) -> {
+                    if (t != null) {
+                        log.error("Failed to delete bot message in channel {}", channel, t);
+                    }
+                });
             return;
         }
 
