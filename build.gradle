@@ -1,11 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
-
     configurations.classpath {
         resolutionStrategy.activateDependencyLocking()
     }
