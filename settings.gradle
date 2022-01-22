@@ -1,1 +1,52 @@
+enableFeaturePreview('VERSION_CATALOGS')
+
 rootProject.name = 'baymax'
+
+ext {
+	//@formatter:off
+
+	//plugin versions
+	gradleGitVersion        = '[2.2.4, 2.4['
+	springBootVersion       = '[2.6.1, 2.7['
+	sonarqubeVersion        = '3.+'
+	versionsVersion         = '0.+'
+
+	jdaVersion              = '[4.4.0_351, 4.5['
+	sentryVersion           = '[5.0.1, 6.0['
+	annotationsVersion      = '[0.0.2, 0.1['
+	emojiVersion            = '[5.1.1, 6.0['
+	guavaVersion            = '[31.0.1-jre, 32['
+
+	//@formatter:on
+}
+
+dependencyResolutionManagement {
+
+	versionCatalogs {
+		libs {
+			version("spring-boot", "$springBootVersion")
+
+			alias("gitprops").toPluginId("com.gorylenko.gradle-git-properties").version("$gradleGitVersion")
+			alias("spring").toPluginId("org.springframework.boot").version("$springBootVersion")
+			alias("sonar").toPluginId("org.sonarqube").version("$sonarqubeVersion")
+			alias("versions").toPluginId("com.github.ben-manes.versions").version("$versionsVersion")
+
+			alias("spring-boot-bom").to("org.springframework.boot", "spring-boot-dependencies").versionRef("spring-boot")
+			alias("jda").to("net.dv8tion:JDA:$jdaVersion")
+			alias("logback").to("ch.qos.logback", "logback-classic").withoutVersion()
+			alias("sentry").to("io.sentry:sentry-logback:$sentryVersion")
+			alias("annotations").to("space.npstr:annotations:$annotationsVersion")
+			alias("snakeyaml").to("org.yaml", "snakeyaml").withoutVersion()
+			alias("caffeine").to("com.github.ben-manes.caffeine", "caffeine").withoutVersion()
+			alias("emojis").to("com.vdurmont:emoji-java:$emojiVersion")
+			alias("guava").to("com.google.guava:guava:$guavaVersion")
+			alias("sqlite").to("org.xerial", "sqlite-jdbc").withoutVersion()
+			alias("flyway").to("org.flywaydb", "flyway-core").withoutVersion()
+
+			alias("spring-boot-starter").to("org.springframework.boot", "spring-boot-starter").withoutVersion()
+
+			alias("junit-api").to("org.junit.jupiter", "junit-jupiter-api").withoutVersion()
+			alias("junit-engine").to("org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+		}
+	}
+}

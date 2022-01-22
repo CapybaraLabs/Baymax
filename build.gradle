@@ -1,32 +1,9 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
-    ext {
-        //@formatter:off
-
-        //plugin versions
-        gradleGitVersion        = '2.+'
-        springBootVersion       = '[2.6.1, 2.7['
-        sonarqubeVersion        = '3.+'
-        versionsVersion         = '0.+'
-
-        jdaVersion              = '[4.4.0_351, 4.5['
-        sentryVersion           = '[5.0.1, 6.0['
-        annotationsVersion      = '[0.0.2, 0.1['
-        emojiVersion            = '[5.1.1, 6.0['
-        guavaVersion            = '[31.0.1-jre, 32['
-
-        //@formatter:on
-    }
     repositories {
         gradlePluginPortal()
         mavenCentral()
-    }
-    dependencies {
-        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:${gradleGitVersion}"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeVersion}"
-        classpath "com.github.ben-manes:gradle-versions-plugin:${versionsVersion}"
     }
 
     configurations.classpath {
@@ -34,13 +11,15 @@ buildscript {
     }
 }
 
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'com.gorylenko.gradle-git-properties'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'jacoco'
-apply plugin: 'org.sonarqube'
-apply plugin: 'com.github.ben-manes.versions'
+plugins {
+    id 'idea'
+    id 'java'
+    alias(libs.plugins.gitprops)
+    alias(libs.plugins.spring)
+    id 'jacoco'
+    alias(libs.plugins.sonar)
+    alias(libs.plugins.versions)
+}
 
 group 'space.npstr.baymax'
 version '0.0.1-SNAPSHOT'
@@ -68,26 +47,26 @@ configurations {
 }
 
 dependencies {
-    implementation platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
-    testRuntimeOnly platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+    implementation platform(libs.spring.boot.bom)
+    testRuntimeOnly platform(libs.spring.boot.bom)
 
-    implementation "net.dv8tion:JDA:$jdaVersion"
-    implementation "ch.qos.logback:logback-classic"
-    implementation "io.sentry:sentry-logback:$sentryVersion"
-    implementation "space.npstr:annotations:$annotationsVersion"
-    implementation "org.yaml:snakeyaml"
-    implementation "com.github.ben-manes.caffeine:caffeine"
-    implementation "com.vdurmont:emoji-java:$emojiVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
-    implementation "org.xerial:sqlite-jdbc"
-    implementation "org.flywaydb:flyway-core"
+    implementation libs.jda
+    implementation libs.logback
+    implementation libs.sentry
+    implementation libs.annotations
+    implementation libs.snakeyaml
+    implementation libs.caffeine
+    implementation libs.emojis
+    implementation libs.guava
+    implementation libs.sqlite
+    implementation libs.flyway
 
     //spring
-    implementation "org.springframework.boot:spring-boot-starter"
+    implementation libs.spring.boot.starter
 
     //testing
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation libs.junit.api
+    testRuntimeOnly libs.junit.engine
 }
 
 dependencyUpdates.resolutionStrategy {
