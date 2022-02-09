@@ -5,15 +5,13 @@ pluginManagement {
 	}
 }
 
-enableFeaturePreview('VERSION_CATALOGS')
-
 rootProject.name = 'baymax'
 
 ext {
 	//@formatter:off
 
 	//plugin versions
-	gradleGitVersion        = '[2.2.4, 2.4['
+	gradleGitVersion        = '[2.4, 3.0['
 	springBootVersion       = '[2.6.1, 2.7['
 	sonarqubeVersion        = '3.+'
 	versionsVersion         = '0.+'
@@ -33,27 +31,27 @@ dependencyResolutionManagement {
 		libs {
 			version("spring-boot", "$springBootVersion")
 
-			alias("gitprops").toPluginId("com.gorylenko.gradle-git-properties").version("$gradleGitVersion")
-			alias("spring").toPluginId("org.springframework.boot").version("$springBootVersion")
-			alias("sonar").toPluginId("org.sonarqube").version("$sonarqubeVersion")
-			alias("versions").toPluginId("com.github.ben-manes.versions").version("$versionsVersion")
+			plugin("gitprops", "com.gorylenko.gradle-git-properties").version("$gradleGitVersion")
+			plugin("spring", "org.springframework.boot").version("$springBootVersion")
+			plugin("sonar", "org.sonarqube").version("$sonarqubeVersion")
+			plugin("versions", "com.github.ben-manes.versions").version("$versionsVersion")
 
-			alias("spring-boot-bom").to("org.springframework.boot", "spring-boot-dependencies").versionRef("spring-boot")
-			alias("jda").to("net.dv8tion:JDA:$jdaVersion")
-			alias("logback").to("ch.qos.logback", "logback-classic").withoutVersion()
-			alias("sentry").to("io.sentry:sentry-logback:$sentryVersion")
-			alias("annotations").to("space.npstr:annotations:$annotationsVersion")
-			alias("snakeyaml").to("org.yaml", "snakeyaml").withoutVersion()
-			alias("caffeine").to("com.github.ben-manes.caffeine", "caffeine").withoutVersion()
-			alias("emojis").to("com.vdurmont:emoji-java:$emojiVersion")
-			alias("guava").to("com.google.guava:guava:$guavaVersion")
-			alias("sqlite").to("org.xerial", "sqlite-jdbc").withoutVersion()
-			alias("flyway").to("org.flywaydb", "flyway-core").withoutVersion()
+			library("spring-boot-bom", "org.springframework.boot", "spring-boot-dependencies").versionRef("spring-boot")
+			library("jda", "net.dv8tion:JDA:$jdaVersion")
+			library("logback", "ch.qos.logback", "logback-classic").withoutVersion()
+			library("sentry", "io.sentry:sentry-logback:$sentryVersion")
+			library("annotations", "space.npstr:annotations:$annotationsVersion")
+			library("snakeyaml", "org.yaml", "snakeyaml").withoutVersion()
+			library("caffeine", "com.github.ben-manes.caffeine", "caffeine").withoutVersion()
+			library("emojis", "com.vdurmont:emoji-java:$emojiVersion")
+			library("guava", "com.google.guava:guava:$guavaVersion")
+			library("sqlite", "org.xerial", "sqlite-jdbc").withoutVersion()
+			library("flyway", "org.flywaydb", "flyway-core").withoutVersion()
 
-			alias("spring-boot-starter").to("org.springframework.boot", "spring-boot-starter").withoutVersion()
+			library("spring-boot-starter", "org.springframework.boot", "spring-boot-starter").withoutVersion()
 
-			alias("junit-api").to("org.junit.jupiter", "junit-jupiter-api").withoutVersion()
-			alias("junit-engine").to("org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+			library("junit-api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
+			library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
 		}
 	}
 }
