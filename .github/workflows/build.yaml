@@ -8,57 +8,56 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
 
-    - name: Gradle Wrapper Verification
-      uses: gradle/wrapper-validation-action@e2c57acffb2c9aa5a8dc6eda2bbae0b6e495bd4c # v1.0.3
+      - name: Gradle Wrapper Verification
+        uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6 # v1.0.5
 
-    - name: Set up env
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      # Build number is increased by 100 due to legacy reasons from previous CI systems
-      run: |
-        echo $GITHUB_RUN_NUMBER
-        BUILD_NUMBER=$((100 + $GITHUB_RUN_NUMBER))
-        echo $BUILD_NUMBER
-        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+      - name: Set up env
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        # Build number is increased by 100 due to legacy reasons from previous CI systems
+        run: |
+          echo $GITHUB_RUN_NUMBER
+          BUILD_NUMBER=$((100 + $GITHUB_RUN_NUMBER))
+          echo $BUILD_NUMBER
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          IMAGE_TAG=$(echo $GITHUB_REF | sed -e 's+refs/heads/++g' | sed -e 's+/+_+g')
+          echo $IMAGE_TAG
+          echo "IMAGE_NAME=${{ env.DOCKER_USERNAME }}/baymax:$IMAGE_TAG" >> "$GITHUB_ENV"
 
-        IMAGE_TAG=$(echo $GITHUB_REF | sed -e 's+refs/heads/++g' | sed -e 's+/+_+g')
-        echo $IMAGE_TAG
-        echo "IMAGE_NAME=${{ env.DOCKER_USERNAME }}/baymax:$IMAGE_TAG" >> "$GITHUB_ENV"
+      - name: Login to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@f3364599c6aa293cdc2b8391b1b56d0c30e45c8a # v1.8.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Setup JDK
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc # v3.6.0
+        with:
+          distribution: "temurin"
+          java-version: 17
+          cache: "gradle"
 
-    - name: Setup JDK
-      uses: actions/setup-java@3bc31aaf88e8fc94dc1e632d48af61be5ca8721c # v2.3.0
-      with:
-        distribution: "temurin"
-        java-version: 17
-        cache: "gradle"
+      - name: Print JDK info
+        run: java -Xmx32m --version
 
-    - name: Print JDK info
-      run: java -Xmx32m --version
+      - name: Sonarqube
+        uses: burrunan/gradle-cache-action@5424817e64ccb6bf267f715f5a46de1bf777c633 # v1.12
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          arguments: sonarqube -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=napstr-github -Dsonar.login=${{ env.SONAR_TOKEN }}
 
-    - name: Sonarqube
-      uses: burrunan/gradle-cache-action@cbdf4342ff988d143aa7a5aeceedffafb8c74bcf # v1.10
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        arguments: sonarqube -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=napstr-github -Dsonar.login=${{ env.SONAR_TOKEN }}
+      - name: Gradle Build
+        uses: burrunan/gradle-cache-action@5424817e64ccb6bf267f715f5a46de1bf777c633 # v1.12
+        with:
+          arguments: build --info
 
-    - name: Gradle Build
-      uses: burrunan/gradle-cache-action@cbdf4342ff988d143aa7a5aeceedffafb8c74bcf # v1.10
-      with:
-        arguments: build --info
+      - name: Docker Build
+        run: docker build -t "${{ env.IMAGE_NAME }}" -f docker/Dockerfile .
 
-    - name: Docker Build
-      run: docker build -t "${{ env.IMAGE_NAME }}" -f docker/Dockerfile .
-
-    - name: Docker Push
-      run: docker push "${{ env.IMAGE_NAME }}"
+      - name: Docker Push
+        run: docker push "${{ env.IMAGE_NAME }}"
