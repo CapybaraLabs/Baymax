@@ -17,8 +17,8 @@
 
 package space.npstr.baymax.helpdesk;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 /**
  * Created by napster on 05.09.18.

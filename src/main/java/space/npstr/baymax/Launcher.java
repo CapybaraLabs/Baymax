@@ -17,6 +17,14 @@
 
 package space.npstr.baymax;
 
+import jakarta.annotation.PreDestroy;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.boot.ApplicationArguments;
@@ -27,15 +35,6 @@ import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEven
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import space.npstr.baymax.info.AppInfo;
 import space.npstr.baymax.info.GitRepoState;
-
-import javax.annotation.PreDestroy;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * Created by napster on 05.09.18.
