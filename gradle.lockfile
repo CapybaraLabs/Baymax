@@ -74,5 +74,4 @@ org.springframework:spring-expression:6.0.4=compileClasspath,default,productionR
 org.springframework:spring-jcl:6.0.4=compileClasspath,default,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.xerial:sqlite-jdbc:3.39.4.1=compileClasspath,default,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.yaml:snakeyaml:1.33=compileClasspath,default,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-space.npstr:annotations:0.0.2=compileClasspath,default,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 empty=annotationProcessor,archives,bootArchives,compile,compileOnly,developmentOnly,runtime,testAnnotationProcessor,testCompile,testCompileOnly,testRuntime

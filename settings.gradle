@@ -18,7 +18,6 @@ ext {
 
 	jdaVersion              = '[4.4.0_351, 4.5['
 	sentryVersion           = '[6.0.0, 7.0['
-	annotationsVersion      = '[0.0.2, 0.1['
 	emojiVersion            = '[5.1.1, 6.0['
 	guavaVersion            = '[31.0.1-jre, 32['
 
@@ -40,7 +39,6 @@ dependencyResolutionManagement {
 			library("jda", "net.dv8tion:JDA:$jdaVersion")
 			library("logback", "ch.qos.logback", "logback-classic").withoutVersion()
 			library("sentry", "io.sentry:sentry-logback:$sentryVersion")
-			library("annotations", "space.npstr:annotations:$annotationsVersion")
 			library("snakeyaml", "org.yaml", "snakeyaml").withoutVersion()
 			library("caffeine", "com.github.ben-manes.caffeine", "caffeine").withoutVersion()
 			library("emojis", "com.vdurmont:emoji-java:$emojiVersion")
