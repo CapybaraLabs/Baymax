@@ -27,12 +27,12 @@ import javax.annotation.CheckReturnValue;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.stereotype.Component;
 
 /**
@@ -64,9 +64,9 @@ public class RestActions {
     }
 
     @CheckReturnValue
-    public CompletionStage<Message> sendMessage(MessageChannel channel, Message message) {
+    public CompletionStage<Message> sendMessage(MessageChannel channel, MessageCreateData message) {
         return channel.sendMessage(message).submit()
-                .thenApply(Function.identity()); //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
+            .thenApply(Function.identity()); //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
     }
 
     @CheckReturnValue
@@ -76,10 +76,10 @@ public class RestActions {
     }
 
     @CheckReturnValue
-    public CompletionStage<Void> purgeChannel(TextChannel channel) {
+    public CompletionStage<Void> purgeChannel(MessageChannel channel) {
         return fetchAllMessages(channel.getHistory())
-                .thenApply(channel::purgeMessages)
-                .thenCompose(requestFutures -> CompletableFuture.allOf(requestFutures.toArray(new CompletableFuture[0])));
+            .thenApply(channel::purgeMessages)
+            .thenCompose(requestFutures -> CompletableFuture.allOf(requestFutures.toArray(new CompletableFuture[0])));
     }
 
     @CheckReturnValue

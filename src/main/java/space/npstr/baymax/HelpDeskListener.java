@@ -20,21 +20,15 @@ package space.npstr.baymax;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
-import java.net.URI;
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -42,6 +36,14 @@ import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Node;
 import space.npstr.baymax.helpdesk.exception.MalformedModelException;
+
+import java.net.URI;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by napster on 05.09.18.
@@ -60,7 +62,7 @@ public class HelpDeskListener extends ListenerAdapter {
     private final TemporaryRoleService temporaryRoleService;
 
     //channel id of the helpdesk <-> user id <-> ongoing dialogue
-    private Map<Long, Cache<Long, UserDialogue>> helpDesksDialogues = new ConcurrentHashMap<>();
+    private final Map<Long, Cache<Long, UserDialogue>> helpDesksDialogues = new ConcurrentHashMap<>();
 
     public HelpDeskListener(EventWaiter eventWaiter, ModelLoader modelLoader, BaymaxConfig baymaxConfig,
                             RestActions restActions, TemporaryRoleService temporaryRoleService) {
@@ -73,15 +75,15 @@ public class HelpDeskListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        TextChannel channel = event.getChannel();
-        if (!channel.canTalk()) {
+    public void onMessageReceived(MessageReceivedEvent event) {
+        MessageChannel messageChannel = event.getChannel();
+        if (!(messageChannel instanceof TextChannel channel) || !messageChannel.canTalk()) {
             return;
         }
 
         var helpDeskOpt = this.baymaxConfig.getHelpDesks().stream()
-                .filter(helpDesk -> helpDesk.getChannelId() == channel.getIdLong())
-                .findAny();
+            .filter(helpDesk -> helpDesk.getChannelId() == channel.getIdLong())
+            .findAny();
 
         if (helpDeskOpt.isEmpty()) {
             return;
@@ -109,7 +111,7 @@ public class HelpDeskListener extends ListenerAdapter {
             return;
         }
         if (isStaff(member)) {
-            if (event.getMessage().isMentioned(event.getJDA().getSelfUser())) {
+            if (event.getMessage().getMentions().isMentioned(event.getJDA().getSelfUser())) {
                 String content = event.getMessage().getContentRaw().toLowerCase();
                 if (content.contains("init")) {
                     userDialogues.invalidateAll();
@@ -123,9 +125,9 @@ public class HelpDeskListener extends ListenerAdapter {
                         userDialogues.cleanUp();
                         init(channel, reloadedModel);
                     } catch (MalformedModelException | YAMLException e) {
-                        Message message = new MessageBuilder().append("Failed to load model due to: **")
-                            .append(e.getMessage())
-                            .append("**")
+                        MessageCreateData message = new MessageCreateBuilder().addContent("Failed to load model due to: **")
+                            .addContent(e.getMessage())
+                            .addContent("**")
                             .build();
                         this.restActions.sendMessage(channel, message)
                             .whenComplete((__, t) -> {
@@ -170,15 +172,15 @@ public class HelpDeskListener extends ListenerAdapter {
     private void init(TextChannel channel, Map<String, Node> model) {
         try {
             this.restActions.purgeChannel(channel)
-                    .exceptionally(t -> {
-                        log.error("Failed to purge messages for init in channel {}", channel, t);
-                        return null; //Void
-                    })
-                    .thenCompose(__ -> {
-                        NodeContext nodeContext = new NodeContext(model.get("root"), Optional.empty());
-                        Message message = UserDialogue.asMessage(nodeContext);
-                        return this.restActions.sendMessage(channel, message);
-                    })
+                .exceptionally(t -> {
+                    log.error("Failed to purge messages for init in channel {}", channel, t);
+                    return null; //Void
+                })
+                .thenCompose(__ -> {
+                    NodeContext nodeContext = new NodeContext(model.get("root"), Optional.empty());
+                    MessageCreateData message = UserDialogue.asMessage(nodeContext);
+                    return this.restActions.sendMessage(channel, message);
+                })
                     .whenComplete((__, t) -> {
                         if (t != null) {
                             log.error("Failed to send init message in channel {}", channel, t);

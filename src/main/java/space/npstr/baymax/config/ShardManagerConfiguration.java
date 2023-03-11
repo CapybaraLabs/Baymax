@@ -31,7 +31,6 @@ import space.npstr.baymax.EventWaiter;
 import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 
-import javax.security.auth.login.LoginException;
 import java.util.EnumSet;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,12 +59,15 @@ public class ShardManagerConfiguration {
     @Bean(destroyMethod = "") //we manage the lifecycle ourselves tyvm, see shutdown hook in the launcher
     public ShardManager shardManager(BaymaxConfig baymaxConfig, OkHttpClient.Builder httpClientBuilder,
                                      ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
-                                     HelpDeskListener helpDeskListener) throws LoginException {
+                                     HelpDeskListener helpDeskListener) {
 
         DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
                 .createDefault(baymaxConfig.getDiscordToken())
                 .setChunkingFilter(ChunkingFilter.ALL) //we need to fetch members from the cache at several places
-                .enableIntents(GatewayIntent.GUILD_MEMBERS) //required for chunking
+                .enableIntents(
+                        GatewayIntent.GUILD_MEMBERS, //required for chunking
+                        GatewayIntent.MESSAGE_CONTENT // parsing numbers
+                )
                 .addEventListeners(eventWaiter)
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder

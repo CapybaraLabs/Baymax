@@ -16,7 +16,7 @@ ext {
 	sonarqubeVersion        = '4.+'
 	versionsVersion         = '0.+'
 
-	jdaVersion              = '[4.4.0_351, 4.5['
+	jdaVersion              = '[5.0.0-beta.5, 5.1['
 	sentryVersion           = '[6.0.0, 7.0['
 	emojiVersion            = '[5.1.1, 6.0['
 	guavaVersion            = '[31.0.1-jre, 32['

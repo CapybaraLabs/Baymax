@@ -17,18 +17,6 @@
 
 package space.npstr.baymax;
 
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.sharding.ShardManager;
-import space.npstr.baymax.db.TemporaryRoleService;
-import space.npstr.baymax.helpdesk.Branch;
-import space.npstr.baymax.helpdesk.Node;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +27,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import space.npstr.baymax.db.TemporaryRoleService;
+import space.npstr.baymax.helpdesk.Branch;
+import space.npstr.baymax.helpdesk.Node;
 
 /**
  * Created by napster on 05.09.18.
@@ -56,10 +55,10 @@ public class UserDialogue {
     private final TemporaryRoleService temporaryRoleService;
     private final EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
     private final List<Long> messagesToCleanUp = new ArrayList<>();
-    private final AtomicReference<EventWaiter.WaitingEvent<GuildMessageReceivedEvent>> waitingEvent = new AtomicReference<>();
+    private final AtomicReference<EventWaiter.WaitingEvent<MessageReceivedEvent>> waitingEvent = new AtomicReference<>();
     private boolean done = false;
 
-    public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, GuildMessageReceivedEvent event,
+    public UserDialogue(EventWaiter eventWaiter, Map<String, Node> model, MessageReceivedEvent event,
                         RestActions restActions, TemporaryRoleService temporaryRoleService) {
 
         this.eventWaiter = eventWaiter;
@@ -140,15 +139,15 @@ public class UserDialogue {
         }
 
         this.waitingEvent.set(this.eventWaiter.waitForEvent(
-                GuildMessageReceivedEvent.class,
-                messageOfThisUser(),
-                event -> this.parseUserInput(event, nodeContext),
-                HelpDeskListener.EXPIRE_MINUTES, TimeUnit.MINUTES,
-                this::done
+            MessageReceivedEvent.class,
+            messageOfThisUser(),
+            event -> this.parseUserInput(event, nodeContext),
+            HelpDeskListener.EXPIRE_MINUTES, TimeUnit.MINUTES,
+            this::done
         ));
     }
 
-    private void parseUserInput(GuildMessageReceivedEvent event, NodeContext currentNodeContext) {
+    private void parseUserInput(MessageReceivedEvent event, NodeContext currentNodeContext) {
         this.messagesToCleanUp.add(event.getMessageIdLong());
         String contentRaw = event.getMessage().getContentRaw();
         Node currentNode = currentNodeContext.getNode();
@@ -191,32 +190,32 @@ public class UserDialogue {
         sendNode(nextNodeContext);
     }
 
-    private Predicate<GuildMessageReceivedEvent> messageOfThisUser() {
+    private Predicate<MessageReceivedEvent> messageOfThisUser() {
         return event ->
-                event.getAuthor().getIdLong() == this.userId
-                        && event.getChannel().getIdLong() == this.channelId;
+            event.getAuthor().getIdLong() == this.userId
+                && event.getChannel().getIdLong() == this.channelId;
     }
 
-    public static Message asMessage(NodeContext nodeContext) {
-        MessageBuilder mb = new MessageBuilder();
+    public static MessageCreateData asMessage(NodeContext nodeContext) {
+        MessageCreateBuilder mb = new MessageCreateBuilder();
         EmojisNumbersParser emojisNumbersParser = new EmojisNumbersParser();
         Node node = nodeContext.getNode();
 
-        mb.append("**").append(node.getTitle()).append("**\n\n");
+        mb.addContent("**").addContent(node.getTitle()).addContent("**\n\n");
         int bb = 1;
         for (Branch branch : node.getBranches()) {
             mb
-                    .append(emojisNumbersParser.numberAsEmojis(bb++))
-                    .append(" ")
-                    .append(branch.getMessage())
-                    .append("\n");
+                .addContent(emojisNumbersParser.numberAsEmojis(bb++))
+                .addContent(" ")
+                .addContent(branch.getMessage())
+                .addContent("\n");
         }
-        mb.append("\n");
+        mb.addContent("\n");
         if ("root".equals(node.getId())) {
-            mb.append("Say a number to start.").append("\n");
+            mb.addContent("Say a number to start.\n");
         } else {
             if (nodeContext.getPreviousNodeContext().isPresent()) {
-                mb.append(emojisNumbersParser.numberAsEmojis(0)).append(" ").append("Go back.").append("\n");
+                mb.addContent(emojisNumbersParser.numberAsEmojis(0)).addContent(" Go back.\n");
             }
         }
 
