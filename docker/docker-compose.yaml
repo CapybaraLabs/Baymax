@@ -6,7 +6,8 @@ services:
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-#    ports:
+    ports:
+      - 127.0.0.1:5005:5005   # Remote debug
 #      - 127.0.0.1:8849:8849   # JProfiler
     volumes:
       - "./baymax.yaml:/opt/baymax/baymax.yaml:ro"
@@ -21,6 +22,7 @@ services:
       - -Xms512m
       - -Xmx512m
       - -XX:HeapDumpPath=emergencydump.hprof
+      - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 # Hotspot Options:
       - -XX:+HeapDumpOnOutOfMemoryError
       - -Xlog:gc*:logs/gc/gc-%t.log::filesize=1g
