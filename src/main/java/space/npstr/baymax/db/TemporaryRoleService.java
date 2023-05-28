@@ -23,9 +23,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.RestActions;
-import space.npstr.baymax.ShardManagerHolder;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * Created by napster on 21.09.18.
@@ -50,12 +49,12 @@ public class TemporaryRoleService {
     private static final int KEEP_ROLE_FOR_HOURS = 3;
 
     private final Database database;
-    private final Supplier<ShardManager> shardManager;
+    private final ObjectProvider<ShardManager> shardManager;
     private final RestActions restActions;
 
-    public TemporaryRoleService(Database database, ShardManagerHolder shardManagerHolder, RestActions restActions) {
+    public TemporaryRoleService(Database database, ObjectProvider<ShardManager> shardManager, RestActions restActions) {
         this.database = database;
-        this.shardManager = shardManagerHolder;
+        this.shardManager = shardManager;
         this.restActions = restActions;
         var cleaner = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "temporary-role-service"));
 
@@ -112,7 +111,7 @@ public class TemporaryRoleService {
     @SuppressWarnings("squid:S135") // the while loop is perfectly readable
     private void cleanUp() {
         //avoid runnign this when were not ready
-        if (this.shardManager.get().getShardCache().stream()
+        if (this.shardManager.getObject().getShardCache().stream()
                 .anyMatch(shard -> shard.getStatus() != JDA.Status.CONNECTED)) {
             return;
         }
@@ -132,7 +131,7 @@ public class TemporaryRoleService {
                         long userId = resultSet.getLong(1);
                         long roleId = resultSet.getLong(2);
                         long guildId = resultSet.getLong(3);
-                        Guild guild = this.shardManager.get().getGuildById(guildId);
+                        Guild guild = this.shardManager.getObject().getGuildById(guildId);
                         if (guild == null) { //we left the guild. dont do anything, we might get readded
                             continue;
                         }

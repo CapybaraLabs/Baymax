@@ -20,6 +20,7 @@ package space.npstr.baymax;
 import jakarta.annotation.PreDestroy;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,9 +34,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * Created by napster on 05.09.18.
@@ -79,10 +80,10 @@ public class Launcher implements ApplicationRunner {
         app.run(args);
     }
 
-    public Launcher(ShardManagerHolder shardManagerHolder, ScheduledThreadPoolExecutor jdaThreadPool) {
+    public Launcher(ObjectProvider<ShardManager> shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
         this.shutdownHook = new Thread(() -> {
             try {
-                shutdown(shardManagerHolder, jdaThreadPool);
+                shutdown(shardManager, jdaThreadPool);
             } catch (Exception e) {
                 log.error("Uncaught exception in shutdown hook", e);
             } finally {
@@ -132,12 +133,12 @@ public class Launcher implements ApplicationRunner {
         return false;
     }
 
-    private void shutdown(Supplier<ShardManager> shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
+    private void shutdown(ObjectProvider<ShardManager> shardManager, ScheduledThreadPoolExecutor jdaThreadPool) {
         //okHttpClient claims that a shutdown isn't necessary
 
         //shutdown JDA
         log.info("Shutting down shards");
-        shardManager.get().shutdown();
+        Optional.ofNullable(shardManager.getIfAvailable()).ifPresent(ShardManager::shutdown);
 
         //shutdown executors
         log.info("Shutting down jda thread pool");
