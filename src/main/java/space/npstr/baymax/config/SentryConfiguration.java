@@ -19,7 +19,6 @@ package space.npstr.baymax.config;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.filter.ThresholdFilter;
 import io.sentry.Sentry;
 import io.sentry.logback.SentryAppender;
 import org.slf4j.Logger;
@@ -76,12 +75,7 @@ public class SentryConfiguration {
         if (sentryAppender == null) {
             sentryAppender = new SentryAppender();
             sentryAppender.setName(SENTRY_APPENDER_NAME);
-
-            ThresholdFilter warningsOrAboveFilter = new ThresholdFilter();
-            warningsOrAboveFilter.setLevel(Level.WARN.levelStr);
-            warningsOrAboveFilter.start();
-            sentryAppender.addFilter(warningsOrAboveFilter);
-
+            sentryAppender.setMinimumEventLevel(Level.WARN);
             sentryAppender.setContext(loggerContext);
             root.addAppender(sentryAppender);
         }
