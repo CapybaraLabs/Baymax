@@ -17,6 +17,7 @@
 
 package space.npstr.baymax.helpdesk;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import space.npstr.baymax.helpdesk.exception.MissingTargetNodeException;
@@ -33,7 +34,7 @@ import java.util.Map;
 public class ModelParser {
 
     public Map<String, Node> parse(String yaml) {
-        Yaml snakeYaml = new Yaml(new Constructor(NodeModel.class));
+        Yaml snakeYaml = new Yaml(new Constructor(NodeModel.class, new LoaderOptions()));
         Iterable<Object> objects = snakeYaml.loadAll(yaml);
         Map<String, Node> model = new HashMap<>();
         objects.forEach(o -> model.put(((Node) o).getId(), (Node) o));

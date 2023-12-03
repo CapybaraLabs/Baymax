@@ -75,7 +75,8 @@ public class ShardManagerConfiguration {
                 .setHttpClientBuilder(httpClientBuilder
                         .retryOnConnectionFailure(false))
                 .setEnableShutdownHook(false)
-                .setRateLimitPool(jdaThreadPool, false)
+                .setRateLimitScheduler(jdaThreadPool, false)
+                .setRateLimitElastic(jdaThreadPool, false)
                 .setCallbackPool(jdaThreadPool, false)
                 .disableCache(EnumSet.allOf(CacheFlag.class));
 
