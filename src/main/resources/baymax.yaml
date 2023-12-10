@@ -16,6 +16,12 @@ logging:
 
 sentry:
   dsn: ""
+  logging.enabled: false
+  in-app-includes:
+    - "space.npstr"
+    - "dev.capybaralabs"
+  logging:
+    minimum-event-level: warn
 
 baymax:
   status-type: 1

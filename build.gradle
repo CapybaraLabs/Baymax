@@ -43,6 +43,7 @@ dependencies {
     implementation libs.jda
     implementation libs.logback
     implementation libs.sentry
+    implementation libs.sentry.spring.starter
     implementation libs.snakeyaml
     implementation libs.caffeine
     implementation libs.emojis
