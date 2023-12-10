@@ -61,7 +61,7 @@ gradle-app.setting
 # End of https://www.gitignore.io/api/git,java,linux,gradle,intellij+iml
 
 
-baymax.yaml
+baymax-secrets.yaml
 application.yaml
 logs/
 *.sqlite

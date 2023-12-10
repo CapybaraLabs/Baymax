@@ -1,0 +1,33 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  main:
+    banner-mode: log
+
+logging:
+  file.name: './logs/baymax.log'
+  file.max-history: 30
+  file.max-size: 1GB
+
+  level:
+    root: INFO
+    space.npstr: TRACE
+
+sentry:
+  dsn: ""
+
+baymax:
+  status-type: 1
+  status-message: ""
+  staff-role-ids:
+    - 479601466110377984 # Staff in Aki's Lair
+    - 340205944866865162 # Moderators in Wolfia
+    - 321115861924446208 # Botfather in Wolfia
+  help-desks:
+    - channel-id: 487947091960659969
+      model-name: aki
+      model-uri: "https://raw.githubusercontent.com/CapybaraLabs/aki-wiki/master/baymax_model.yaml"
+    - channel-id: 634144815709290510
+      model-name: wolfia
+      model-uri: "https://raw.githubusercontent.com/wolfiabot/baymax_helpdesk/master/baymax_helpdesk.yaml"

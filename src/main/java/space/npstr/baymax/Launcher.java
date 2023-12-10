@@ -65,6 +65,8 @@ public class Launcher implements ApplicationRunner {
 
         System.setProperty("spring.config.name", "baymax");
         SpringApplication app = new SpringApplication(Launcher.class);
+        app.setAdditionalProfiles("secrets");
+
         app.addListeners(
                 event -> {
                     if (event instanceof ApplicationEnvironmentPreparedEvent) {
