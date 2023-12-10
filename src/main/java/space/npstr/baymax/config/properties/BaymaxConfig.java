@@ -17,96 +17,51 @@
 
 package space.npstr.baymax.config.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.lang.Nullable;
 
 /**
  * Created by napster on 05.09.18.
  */
-@Component
 @ConfigurationProperties("baymax")
-public class BaymaxConfig {
+public record BaymaxConfig(
+    String discordToken,
+    int statusType,
+    @Nullable String statusMessage,
+    Set<Long> staffRoleIds,
+    List<HelpDesk> helpDesks
+) {
 
-    private String discordToken = "";
-    private int statusType = 0;
-    private String statusMessage = "";
-    private Set<Long> staffRoleIds = Collections.emptySet();
-    private List<HelpDesk> helpDesks = Collections.emptyList();
-
-    public String getDiscordToken() {
-        return this.discordToken;
-    }
-
-    public void setDiscordToken(String discordToken) {
-        this.discordToken = discordToken;
-    }
-
-    public int getStatusType() {
-        return statusType;
-    }
-
-    public void setStatusType(int statusType) {
-        this.statusType = statusType;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public Set<Long> getStaffRoleIds() {
-        return this.staffRoleIds;
-    }
-
-    public void setStaffRoleIds(Set<Long> staffRoleIds) {
-        this.staffRoleIds = staffRoleIds;
-    }
-
-    public List<HelpDesk> getHelpDesks() {
-        return this.helpDesks;
-    }
-
-    public void setHelpDesks(List<HelpDesk> helpDesks) {
-        this.helpDesks = helpDesks;
-    }
-
-    public static class HelpDesk {
-
-        private long channelId;
-        private String modelName = "";
-        private Optional<URI> modelUri = Optional.empty();
-
-        public long getChannelId() {
-            return this.channelId;
+    @SuppressWarnings("ConstantValue")
+    public BaymaxConfig {
+        if (discordToken == null || discordToken.isBlank()) {
+            throw new IllegalArgumentException("Discord token must not be blank");
         }
-
-        public void setChannelId(long channelId) {
-            this.channelId = channelId;
+        if (staffRoleIds == null) {
+            staffRoleIds = Set.of();
         }
-
-        public String getModelName() {
-            return this.modelName;
+        if (helpDesks == null) {
+            helpDesks = List.of();
         }
+    }
 
-        public void setModelName(String modelName) {
-            this.modelName = modelName;
-        }
+    public record HelpDesk(
+        long channelId,
+        String modelName,
+        @Nullable URI modelUri
+    ) {
 
-        public Optional<URI> getModelUri() {
-            return modelUri;
-        }
-
-        public void setModelUri(URI modelUri) {
-            this.modelUri = Optional.of(modelUri);
+        @SuppressWarnings("ConstantValue")
+        public HelpDesk {
+            if (channelId <= 0) {
+                throw new IllegalArgumentException("Channel id must be positive");
+            }
+            if (modelName == null || modelName.isBlank()) {
+                throw new IllegalArgumentException("Model name must not be blank");
+            }
         }
     }
 }

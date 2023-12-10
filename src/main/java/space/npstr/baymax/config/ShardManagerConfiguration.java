@@ -63,7 +63,7 @@ public class ShardManagerConfiguration {
                                      HelpDeskListener helpDeskListener) {
 
         DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
-                .createDefault(baymaxConfig.getDiscordToken())
+                .createDefault(baymaxConfig.discordToken())
                 .setChunkingFilter(ChunkingFilter.ALL) //we need to fetch members from the cache at several places
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(
@@ -80,9 +80,9 @@ public class ShardManagerConfiguration {
                 .setCallbackPool(jdaThreadPool, false)
                 .disableCache(EnumSet.allOf(CacheFlag.class));
 
-        String statusMessage = baymaxConfig.getStatusMessage();
+        String statusMessage = baymaxConfig.statusMessage();
         if (!ObjectUtils.isEmpty(statusMessage)) {
-            Activity.ActivityType activityType = Activity.ActivityType.fromKey(baymaxConfig.getStatusType());
+            Activity.ActivityType activityType = Activity.ActivityType.fromKey(baymaxConfig.statusType());
             Activity discordStatus = Activity.of(activityType, statusMessage);
             shardBuilder.setActivity(discordStatus);
         }

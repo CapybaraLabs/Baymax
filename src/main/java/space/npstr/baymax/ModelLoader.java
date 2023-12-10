@@ -19,6 +19,7 @@ package space.npstr.baymax;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import space.npstr.baymax.helpdesk.ModelParser;
 import space.npstr.baymax.helpdesk.Node;
@@ -36,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -58,7 +58,7 @@ public class ModelLoader {
         this.tempDir.toFile().deleteOnExit();
     }
 
-    public Map<String, Node> getModel(String name, Optional<URI> uri) {
+    public Map<String, Node> getModel(String name, @Nullable URI uri) {
         return this.models.computeIfAbsent(name, __ -> loadModel(name, uri));
     }
 
@@ -66,17 +66,17 @@ public class ModelLoader {
      * @throws RuntimeException        if there is a general problem loading the model
      * @throws MalformedModelException if there is a problem parsing the model
      */
-    public Map<String, Node> attemptReload(String name, Optional<URI> uri) {
+    public Map<String, Node> attemptReload(String name, @Nullable URI uri) {
         Map<String, Node> model = loadModel(name, uri);
         this.models.put(name, model);
         return model;
     }
 
-    private Map<String, Node> loadModel(String name, Optional<URI> uri) {
+    private Map<String, Node> loadModel(String name, @Nullable URI uri) {
         String rawModel;
-        if (uri.isPresent()) {
+        if (uri != null) {
             try {
-                rawModel = loadModelFromUrl(name, uri.get());
+                rawModel = loadModelFromUrl(name, uri);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to load model" + name + " from url " + uri, e);
             }

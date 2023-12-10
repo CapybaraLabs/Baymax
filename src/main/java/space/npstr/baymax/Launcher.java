@@ -18,6 +18,13 @@
 package space.npstr.baymax;
 
 import jakarta.annotation.PreDestroy;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,21 +34,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.info.AppInfo;
 import space.npstr.baymax.info.GitRepoState;
-
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by napster on 05.09.18.
  */
 @SpringBootApplication
+@EnableConfigurationProperties({
+    BaymaxConfig.class,
+})
 public class Launcher implements ApplicationRunner {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Launcher.class);

@@ -20,6 +20,13 @@ package space.npstr.baymax;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import java.net.URI;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -36,14 +43,6 @@ import space.npstr.baymax.config.properties.BaymaxConfig;
 import space.npstr.baymax.db.TemporaryRoleService;
 import space.npstr.baymax.helpdesk.Node;
 import space.npstr.baymax.helpdesk.exception.MalformedModelException;
-
-import java.net.URI;
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by napster on 05.09.18.
@@ -81,8 +80,8 @@ public class HelpDeskListener extends ListenerAdapter {
             return;
         }
 
-        var helpDeskOpt = this.baymaxConfig.getHelpDesks().stream()
-            .filter(helpDesk -> helpDesk.getChannelId() == channel.getIdLong())
+        var helpDeskOpt = this.baymaxConfig.helpDesks().stream()
+            .filter(helpDesk -> helpDesk.channelId() == channel.getIdLong())
             .findAny();
 
         if (helpDeskOpt.isEmpty()) {
@@ -104,7 +103,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
         var helpDesk = helpDeskOpt.get();
         var userDialogues = this.helpDesksDialogues.computeIfAbsent(
-                helpDesk.getChannelId(), channelId -> this.createUserDialogueCache()
+            helpDesk.channelId(), channelId -> this.createUserDialogueCache()
         );
         Member member = event.getMember();
         if (member == null) {
@@ -116,11 +115,11 @@ public class HelpDeskListener extends ListenerAdapter {
                 if (content.contains("init")) {
                     userDialogues.invalidateAll();
                     userDialogues.cleanUp();
-                    init(channel, helpDesk.getModelName(), helpDesk.getModelUri());
+                    init(channel, helpDesk.modelName(), helpDesk.modelUri());
                     return;
                 } else if (content.contains("reload")) {
                     try {
-                        var reloadedModel = this.modelLoader.attemptReload(helpDesk.getModelName(), helpDesk.getModelUri());
+                        var reloadedModel = this.modelLoader.attemptReload(helpDesk.modelName(), helpDesk.modelUri());
                         userDialogues.invalidateAll();
                         userDialogues.cleanUp();
                         init(channel, reloadedModel);
@@ -143,7 +142,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
         userDialogues.get(event.getAuthor().getIdLong(),
                 userId -> {
-                    var model = this.modelLoader.getModel(helpDesk.getModelName(), helpDesk.getModelUri());
+                    var model = this.modelLoader.getModel(helpDesk.modelName(), helpDesk.modelUri());
                     return new UserDialogue(this.eventWaiter, model, event, this.restActions, this.temporaryRoleService);
                 });
     }
@@ -155,17 +154,17 @@ public class HelpDeskListener extends ListenerAdapter {
         //2. Post the root message
 
         ShardManager shardManager = Objects.requireNonNull(event.getJDA().getShardManager(), "Shard manager required");
-        for (BaymaxConfig.HelpDesk helpDesk : this.baymaxConfig.getHelpDesks()) {
-            TextChannel channel = shardManager.getTextChannelById(helpDesk.getChannelId());
+        for (BaymaxConfig.HelpDesk helpDesk : this.baymaxConfig.helpDesks()) {
+            TextChannel channel = shardManager.getTextChannelById(helpDesk.channelId());
             if (channel == null) {
-                log.warn("Failed to find and setup configured help desk channel {}", helpDesk.getChannelId());
+                log.warn("Failed to find and setup configured help desk channel {}", helpDesk.channelId());
                 return;
             }
-            init(channel, helpDesk.getModelName(), helpDesk.getModelUri());
+            init(channel, helpDesk.modelName(), helpDesk.modelUri());
         }
     }
 
-    private void init(TextChannel channel, String modelName, Optional<URI> modelUri) {
+    private void init(TextChannel channel, String modelName, @Nullable URI modelUri) {
         init(channel, this.modelLoader.getModel(modelName, modelUri));
     }
 
@@ -193,7 +192,7 @@ public class HelpDeskListener extends ListenerAdapter {
 
     private boolean isStaff(Member member) {
         return member.getRoles().stream()
-                .anyMatch(role -> this.baymaxConfig.getStaffRoleIds().contains(role.getIdLong()));
+            .anyMatch(role -> this.baymaxConfig.staffRoleIds().contains(role.getIdLong()));
     }
 
     private Cache<Long, UserDialogue> createUserDialogueCache() {
