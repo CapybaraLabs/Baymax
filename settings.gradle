@@ -19,7 +19,7 @@ ext {
 	jdaVersion              = '[5.0.0-beta.5, 5.1['
 	sentryVersion           = '[7.0.0, 8.0['
 	emojiVersion            = '[5.1.1, 6.0['
-	guavaVersion            = '[32.1.1-jre, 33['
+	guavaVersion            = '[33.0.0-jre, 34['
 
 	//@formatter:on
 }
@@ -51,6 +51,7 @@ dependencyResolutionManagement {
 
 			library("junit-api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
 			library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+			library("junit-launcher", "org.junit.platform", "junit-platform-launcher").withoutVersion()
 		}
 	}
 }
