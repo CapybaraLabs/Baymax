@@ -13,7 +13,7 @@ ext {
 	//plugin versions
 	gradleGitVersion        = '[2.4, 3.0['
 	springBootVersion       = '[3.2, 3.3['
-	sonarqubeVersion        = '4.+'
+	sonarqubeVersion        = '[5.0.0.4638, 6.0['
 	versionsVersion         = '0.+'
 
 	jdaVersion              = '[5.0.0-beta.5, 5.1['
