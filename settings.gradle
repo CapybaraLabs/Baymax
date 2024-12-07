@@ -12,11 +12,11 @@ ext {
 
 	//plugin versions
 	gradleGitVersion        = '[2.4, 3.0['
-	springBootVersion       = '[3.3.1, 3.4['
-	sonarqubeVersion        = '[5.0.0.4638, 6.0['
+	springBootVersion       = '[3.4.0, 3.5['
+	sonarqubeVersion        = '[6.0.1.5171, 7.0['
 	versionsVersion         = '0.+'
 
-	jdaVersion              = '[5.1.2, 5.2['
+	jdaVersion              = '[5.2.1, 5.3['
 	sentryVersion           = '[7.0.0, 8.0['
 	emojiVersion            = '[5.1.1, 6.0['
 	guavaVersion            = '[33.0.0-jre, 34['
