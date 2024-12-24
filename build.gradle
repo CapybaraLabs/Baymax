@@ -7,13 +7,14 @@ buildscript {
 }
 
 plugins {
-    id 'idea'
-    id 'java'
-    alias(libs.plugins.gitprops)
-    alias(libs.plugins.spring)
-    id 'jacoco'
-    alias(libs.plugins.sonar)
-    alias(libs.plugins.versions)
+    id "idea"
+    id "java"
+    id "com.gorylenko.gradle-git-properties" version "$gradleGitPluginVersion"
+    id "com.github.ben-manes.versions" version "$versionsPluginVersion"
+    id "org.springframework.boot" version "$springBootVersion"
+
+    id "jacoco"
+    id "org.sonarqube" version "$sonarqubePluginVersion"
 }
 
 group 'space.npstr.baymax'
@@ -37,27 +38,27 @@ configurations {
 }
 
 dependencies {
-    implementation platform(libs.spring.boot.bom)
-    testRuntimeOnly platform(libs.spring.boot.bom)
+    implementation platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+    testRuntimeOnly platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
 
-    implementation libs.jda
-    implementation libs.logback
-    implementation libs.sentry
-    implementation libs.sentry.spring.starter
-    implementation libs.snakeyaml
-    implementation libs.caffeine
-    implementation libs.emojis
-    implementation libs.guava
-    implementation libs.sqlite
-    implementation libs.flyway
+    implementation "net.dv8tion:JDA:$jdaVersion"
+    implementation "ch.qos.logback:logback-classic"
+    implementation "io.sentry:sentry-logback:$sentryVersion"
+    implementation "io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion"
+    implementation "org.yaml:snakeyaml"
+    implementation "com.github.ben-manes.caffeine:caffeine"
+    implementation "com.vdurmont:emoji-java:$emojiVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "org.xerial:sqlite-jdbc"
+    implementation "org.flywaydb:flyway-core"
 
     //spring
-    implementation libs.spring.boot.starter
+    implementation "org.springframework.boot:spring-boot-starter"
 
     //testing
-    testImplementation libs.junit.api
-    testRuntimeOnly libs.junit.engine
-    testRuntimeOnly libs.junit.launcher
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 dependencyUpdates.resolutionStrategy {
