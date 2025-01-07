@@ -17,8 +17,8 @@ plugins {
     id "org.sonarqube" version "$sonarqubePluginVersion"
 }
 
-group 'space.npstr.baymax'
-version '0.0.1-SNAPSHOT'
+group = 'space.npstr.baymax'
+version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
@@ -29,7 +29,7 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 configurations {
@@ -130,11 +130,14 @@ sonarqube {
 
 processResources {
     //inject values into app.properties
+    def projectVersion = project.version
+    def projectGroup = project.group
+    def projectName = project.name
     filesMatching("**/app.properties") {
         filter ReplaceTokens, tokens: [
-                "project.version"   : project.version,
-                "project.groupId"   : project.group,
-                "project.artifactId": project.name,
+                "project.version"   : projectVersion,
+                "project.groupId"   : projectGroup,
+                "project.artifactId": projectName,
                 "env.BUILD_NUMBER"  : (System.getenv('CI') ? System.getenv('BUILD_NUMBER') : 'DEV'),
                 "env.BUILD_TIME"    : System.currentTimeMillis() + ''
         ]
