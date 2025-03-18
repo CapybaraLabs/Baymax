@@ -6,8 +6,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - 127.0.0.1:5005:5005   # Remote debug
-#      - 127.0.0.1:8849:8849   # JProfiler
+      - 127.0.0.1:5007:5005   # Remote debug
     volumes:
       - "./baymax-secrets.yaml:/opt/baymax/baymax-secrets.yaml:ro"
       - "./models:/opt/baymax/models:ro"
