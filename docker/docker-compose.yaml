@@ -13,25 +13,21 @@ services:
       - "./logs:/opt/baymax/logs"
       - "./logs/gc:/opt/baymax/logs/gc"
       - "./baymax.sqlite:/opt/baymax/baymax.sqlite"
-#    stop_grace_period: 60s
     entrypoint:
       - java
-# Common JVM Options:
       - -Xms512m
       - -Xmx512m
+      - -XX:+AlwaysPreTouch
+      - -XX:+HeapDumpOnOutOfMemoryError
       - -XX:HeapDumpPath=emergencydump.hprof
       - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-# Hotspot Options:
-      - -XX:+HeapDumpOnOutOfMemoryError
       - -Xlog:gc*:logs/gc/gc-%t.log::filesize=1g
-      - -XX:+UseG1GC
-      - -XX:+ParallelRefProcEnabled
+      #- -XX:+UseG1GC
+      #- -XX:+ParallelRefProcEnabled
+      - -XX:+UseZGC
+      - -XX:+ZGenerational
+      - -XX:+UseTransparentHugePages
       - -XX:+UseStringDeduplication
-# Open J9 Options:
-      #- -XX:+HeapDumpOnOutOfMemory
-      #- -Xgcpolicy:balanced
-      #- -Xverbosegclog:logs/gc/gc-%Y-%m-%d_%H-%M-%S.xml
-# The Jar
       - -jar
       - baymax.jar
 
