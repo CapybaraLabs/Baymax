@@ -32,7 +32,7 @@ services:
       - baymax.jar
 
   #watchtower:
-  #  image: v2tec/watchtower
+  #  image: containrrr/watchtower
   #  restart: always
   #  labels:
   #    - "com.centurylinklabs.watchtower.enable=true"
