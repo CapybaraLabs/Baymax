@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk
-MAINTAINER napster@npstr.space
+LABEL org.opencontainers.image.authors="napster@npstr.space"
 
-ENV ENV docker
+ENV ENV=docker
 
 WORKDIR /opt/baymax
 
