@@ -14,7 +14,6 @@ plugins {
     id "org.springframework.boot" version "$springBootVersion"
 
     id "jacoco"
-    id "org.sonarqube" version "$sonarqubePluginVersion"
 }
 
 group = 'space.npstr.baymax'
@@ -119,12 +118,6 @@ test {
     useJUnitPlatform()
     jacoco {
         includes['space.npstr.baymax.*']
-    }
-}
-
-sonarqube {
-    properties {
-        property 'sonar.inclusions', 'src/main/java/space/npstr/baymax/**/*'
     }
 }
 

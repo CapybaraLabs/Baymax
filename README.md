@@ -4,7 +4,6 @@
 _A friendly help desk bot for Discord_
 
 [![Build Status](https://github.com/napstr/Baymax/actions/workflows/build.yaml/badge.svg)](https://github.com/napstr/Baymax/actions/workflows/build.yaml)
-[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=space.npstr.baymax%3Abaymax&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=space.npstr.baymax%3Abaymax)
 
 
 ### Why?
