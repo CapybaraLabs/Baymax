@@ -1,11 +1,11 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-com.fasterxml.jackson.core:jackson-annotations:2.18.2=classpath
-com.fasterxml.jackson.core:jackson-core:2.18.2=classpath
-com.fasterxml.jackson.core:jackson-databind:2.18.2=classpath
-com.fasterxml.jackson.module:jackson-module-parameter-names:2.18.2=classpath
-com.fasterxml.jackson:jackson-bom:2.18.2=classpath
+com.fasterxml.jackson.core:jackson-annotations:2.18.3=classpath
+com.fasterxml.jackson.core:jackson-core:2.18.3=classpath
+com.fasterxml.jackson.core:jackson-databind:2.18.3=classpath
+com.fasterxml.jackson.module:jackson-module-parameter-names:2.18.3=classpath
+com.fasterxml.jackson:jackson-bom:2.18.3=classpath
 com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin:0.52.0=classpath
 com.github.ben-manes:gradle-versions-plugin:0.52.0=classpath
 com.google.code.findbugs:jsr305:3.0.2=classpath
@@ -41,15 +41,15 @@ org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21=classpath
 org.jetbrains.kotlin:kotlin-stdlib:2.0.21=classpath
 org.jetbrains:annotations:13.0=classpath
 org.slf4j:slf4j-api:2.0.13=classpath
-org.sonarqube:org.sonarqube.gradle.plugin:6.0.1.5171=classpath
-org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:6.0.1.5171=classpath
-org.sonarsource.scanner.lib:sonar-scanner-java-library-batch-interface:3.1.1.261=classpath
-org.sonarsource.scanner.lib:sonar-scanner-java-library:3.1.1.261=classpath
-org.springframework.boot:org.springframework.boot.gradle.plugin:3.4.3=classpath
-org.springframework.boot:spring-boot-buildpack-platform:3.4.3=classpath
-org.springframework.boot:spring-boot-gradle-plugin:3.4.3=classpath
-org.springframework.boot:spring-boot-loader-tools:3.4.3=classpath
-org.springframework:spring-core:6.2.3=classpath
-org.springframework:spring-jcl:6.2.3=classpath
+org.sonarqube:org.sonarqube.gradle.plugin:6.1.0.5360=classpath
+org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:6.1.0.5360=classpath
+org.sonarsource.scanner.lib:sonar-scanner-java-library-batch-interface:3.3.1.450=classpath
+org.sonarsource.scanner.lib:sonar-scanner-java-library:3.3.1.450=classpath
+org.springframework.boot:org.springframework.boot.gradle.plugin:3.4.4=classpath
+org.springframework.boot:spring-boot-buildpack-platform:3.4.4=classpath
+org.springframework.boot:spring-boot-gradle-plugin:3.4.4=classpath
+org.springframework.boot:spring-boot-loader-tools:3.4.4=classpath
+org.springframework:spring-core:6.2.5=classpath
+org.springframework:spring-jcl:6.2.5=classpath
 org.tomlj:tomlj:1.0.0=classpath
 empty=

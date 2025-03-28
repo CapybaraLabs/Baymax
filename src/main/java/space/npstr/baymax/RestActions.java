@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import javax.annotation.CheckReturnValue;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -63,26 +62,22 @@ public class RestActions {
         }
     }
 
-    @CheckReturnValue
     public CompletionStage<Message> sendMessage(MessageChannel channel, MessageCreateData message) {
         return channel.sendMessage(message).submit()
             .thenApply(Function.identity()); //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
     }
 
-    @CheckReturnValue
     public CompletionStage<Void> deleteMessageAfter(Message message, Duration after) {
         return message.delete()
                 .submitAfter(after.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    @CheckReturnValue
     public CompletionStage<Void> purgeChannel(MessageChannel channel) {
         return fetchAllMessages(channel.getHistory())
             .thenApply(channel::purgeMessages)
             .thenCompose(requestFutures -> CompletableFuture.allOf(requestFutures.toArray(new CompletableFuture[0])));
     }
 
-    @CheckReturnValue
     private CompletionStage<List<Message>> fetchAllMessages(MessageHistory history) {
         return history.retrievePast(100).submit()
                 .thenApply(Function.identity()) //avoid JDA's Promise#toCompletableFuture's UnsupportedOperationException
