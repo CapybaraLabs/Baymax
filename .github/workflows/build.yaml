@@ -38,15 +38,18 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 21
-          cache: "gradle"
 
       - name: Print JDK info
         run: java -Xmx32m --version
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
+
+      - name: Print Gradle info
+        run: ./gradlew --version
+
       - name: Gradle Build
-        uses: burrunan/gradle-cache-action@c15634bb25b7284dc084f38dff4e838048b7feaf # v1.22
-        with:
-          arguments: build --info
+        run: ./gradlew build --info
 
       - name: Docker Build
         run: docker build -t "${{ env.IMAGE_NAME }}" -f docker/Dockerfile .
