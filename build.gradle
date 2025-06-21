@@ -64,6 +64,10 @@ dependencyUpdates.resolutionStrategy {
     componentSelection properReleasesOnly()
 }
 
+tasks.register("outdated") {
+    dependsOn dependencyUpdates
+}
+
 dependencyLocking {
     lockAllConfigurations()
 }
