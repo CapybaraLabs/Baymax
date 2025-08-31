@@ -1,16 +1,16 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-com.fasterxml.jackson.core:jackson-annotations:2.19.1=classpath
-com.fasterxml.jackson.core:jackson-core:2.19.1=classpath
-com.fasterxml.jackson.core:jackson-databind:2.19.1=classpath
-com.fasterxml.jackson.module:jackson-module-parameter-names:2.19.1=classpath
-com.fasterxml.jackson:jackson-bom:2.19.1=classpath
+com.fasterxml.jackson.core:jackson-annotations:2.19.2=classpath
+com.fasterxml.jackson.core:jackson-core:2.19.2=classpath
+com.fasterxml.jackson.core:jackson-databind:2.19.2=classpath
+com.fasterxml.jackson.module:jackson-module-parameter-names:2.19.2=classpath
+com.fasterxml.jackson:jackson-bom:2.19.2=classpath
 com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin:0.52.0=classpath
 com.github.ben-manes:gradle-versions-plugin:0.52.0=classpath
 com.google.code.findbugs:jsr305:3.0.2=classpath
-com.gorylenko.gradle-git-properties:com.gorylenko.gradle-git-properties.gradle.plugin:2.5.0=classpath
-com.gorylenko.gradle-git-properties:gradle-git-properties:2.5.0=classpath
+com.gorylenko.gradle-git-properties:com.gorylenko.gradle-git-properties.gradle.plugin:2.5.2=classpath
+com.gorylenko.gradle-git-properties:gradle-git-properties:2.5.2=classpath
 com.squareup.moshi:moshi-kotlin:1.12.0=classpath
 com.squareup.moshi:moshi:1.12.0=classpath
 com.squareup.okhttp3:okhttp:4.12.0=classpath
@@ -35,11 +35,11 @@ org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21=classpath
 org.jetbrains.kotlin:kotlin-stdlib:2.0.21=classpath
 org.jetbrains:annotations:13.0=classpath
 org.slf4j:slf4j-api:1.7.36=classpath
-org.springframework.boot:org.springframework.boot.gradle.plugin:3.5.3=classpath
-org.springframework.boot:spring-boot-buildpack-platform:3.5.3=classpath
-org.springframework.boot:spring-boot-gradle-plugin:3.5.3=classpath
-org.springframework.boot:spring-boot-loader-tools:3.5.3=classpath
-org.springframework:spring-core:6.2.8=classpath
-org.springframework:spring-jcl:6.2.8=classpath
+org.springframework.boot:org.springframework.boot.gradle.plugin:3.5.5=classpath
+org.springframework.boot:spring-boot-buildpack-platform:3.5.5=classpath
+org.springframework.boot:spring-boot-gradle-plugin:3.5.5=classpath
+org.springframework.boot:spring-boot-loader-tools:3.5.5=classpath
+org.springframework:spring-core:6.2.10=classpath
+org.springframework:spring-jcl:6.2.10=classpath
 org.tomlj:tomlj:1.0.0=classpath
 empty=
