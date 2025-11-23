@@ -17,14 +17,6 @@
 
 package space.npstr.baymax;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
-import space.npstr.baymax.helpdesk.ModelParser;
-import space.npstr.baymax.helpdesk.Node;
-import space.npstr.baymax.helpdesk.exception.MalformedModelException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,6 +30,13 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import space.npstr.baymax.helpdesk.ModelParser;
+import space.npstr.baymax.helpdesk.Node;
+import space.npstr.baymax.helpdesk.exception.MalformedModelException;
 
 /**
  * Created by napster on 05.09.18.

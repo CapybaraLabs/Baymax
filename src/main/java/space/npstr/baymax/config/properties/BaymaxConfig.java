@@ -20,8 +20,8 @@ package space.npstr.baymax.config.properties;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.lang.Nullable;
 
 /**
  * Created by napster on 05.09.18.

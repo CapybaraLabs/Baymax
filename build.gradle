@@ -43,7 +43,7 @@ dependencies {
     implementation "net.dv8tion:JDA:$jdaVersion"
     implementation "ch.qos.logback:logback-classic"
     implementation "io.sentry:sentry-logback:$sentryVersion"
-    implementation "io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion"
+    implementation "io.sentry:sentry-spring-boot-4-starter:$sentryVersion"
     implementation "org.yaml:snakeyaml"
     implementation "com.github.ben-manes.caffeine:caffeine"
     implementation "com.vdurmont:emoji-java:$emojiVersion"
