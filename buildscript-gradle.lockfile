@@ -1,12 +1,13 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-com.fasterxml.jackson.core:jackson-annotations:2.20=classpath
-com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin:0.53.0=classpath
-com.github.ben-manes:gradle-versions-plugin:0.53.0=classpath
+# To regenerate this file, run: ./gradlew dependencies --write-locks
+com.fasterxml.jackson.core:jackson-annotations:2.21=classpath
+com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin:0.54.0=classpath
+com.github.ben-manes:gradle-versions-plugin:0.54.0=classpath
 com.google.code.findbugs:jsr305:3.0.2=classpath
-com.gorylenko.gradle-git-properties:com.gorylenko.gradle-git-properties.gradle.plugin:2.5.4=classpath
-com.gorylenko.gradle-git-properties:gradle-git-properties:2.5.4=classpath
+com.gorylenko.gradle-git-properties:com.gorylenko.gradle-git-properties.gradle.plugin:4.0.1=classpath
+com.gorylenko.gradle-git-properties:gradle-git-properties:4.0.1=classpath
 com.squareup.moshi:moshi-kotlin:1.12.0=classpath
 com.squareup.moshi:moshi:1.12.0=classpath
 com.squareup.okhttp3:okhttp:4.12.0=classpath
@@ -21,9 +22,9 @@ net.java.dev.jna:jna:5.17.0=classpath
 org.antlr:antlr4-runtime:4.7.2=classpath
 org.apache.commons:commons-compress:1.27.1=classpath
 org.apache.commons:commons-lang3:3.16.0=classpath
-org.apache.httpcomponents.client5:httpclient5:5.5.2=classpath
-org.apache.httpcomponents.core5:httpcore5-h2:5.3.6=classpath
-org.apache.httpcomponents.core5:httpcore5:5.3.6=classpath
+org.apache.httpcomponents.client5:httpclient5:5.6.1=classpath
+org.apache.httpcomponents.core5:httpcore5-h2:5.4=classpath
+org.apache.httpcomponents.core5:httpcore5:5.4=classpath
 org.jetbrains.kotlin:kotlin-bom:2.0.21=classpath
 org.jetbrains.kotlin:kotlin-reflect:2.0.21=classpath
 org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21=classpath
@@ -33,13 +34,13 @@ org.jetbrains.kotlin:kotlin-stdlib:2.0.21=classpath
 org.jetbrains:annotations:13.0=classpath
 org.jspecify:jspecify:1.0.0=classpath
 org.slf4j:slf4j-api:1.7.36=classpath
-org.springframework.boot:org.springframework.boot.gradle.plugin:4.0.2=classpath
-org.springframework.boot:spring-boot-buildpack-platform:4.0.2=classpath
-org.springframework.boot:spring-boot-gradle-plugin:4.0.2=classpath
-org.springframework.boot:spring-boot-loader-tools:4.0.2=classpath
-org.springframework:spring-core:7.0.3=classpath
+org.springframework.boot:org.springframework.boot.gradle.plugin:4.1.0=classpath
+org.springframework.boot:spring-boot-buildpack-platform:4.1.0=classpath
+org.springframework.boot:spring-boot-gradle-plugin:4.1.0=classpath
+org.springframework.boot:spring-boot-loader-tools:4.1.0=classpath
+org.springframework:spring-core:7.0.8=classpath
 org.tomlj:tomlj:1.0.0=classpath
-tools.jackson.core:jackson-core:3.0.4=classpath
-tools.jackson.core:jackson-databind:3.0.4=classpath
-tools.jackson:jackson-bom:3.0.4=classpath
+tools.jackson.core:jackson-core:3.1.4=classpath
+tools.jackson.core:jackson-databind:3.1.4=classpath
+tools.jackson:jackson-bom:3.1.4=classpath
 empty=

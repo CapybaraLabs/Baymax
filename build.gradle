@@ -84,7 +84,7 @@ task resolveAndLockAll {
             }
         }
         configurations
-                .findAll { it.canBeResolved }
+                .matching { it.canBeResolved }
                 .each { it.resolve() }
     }
 }
