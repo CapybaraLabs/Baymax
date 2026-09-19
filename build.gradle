@@ -10,7 +10,7 @@ plugins {
     id "idea"
     id "java"
     id "com.gorylenko.gradle-git-properties" version "$gradleGitPluginVersion"
-    id "com.github.ben-manes.versions" version "$versionsPluginVersion"
+    id "io.github.ben-manes.versions" version "$versionsPluginVersion"
     id "org.springframework.boot" version "$springBootVersion"
 
     id "jacoco"
