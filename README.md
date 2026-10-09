@@ -109,6 +109,19 @@ roleId: 487925645989380108
 And here is how it looks in chat:
 ![](https://ratelimits.are-la.me/aeb692.gif)
 
+### Usage
+Baymax posts the root node of the model with numbered buttons into each configured help desk channel.
+Clicking a button opens a private (ephemeral) dialogue for that user, which is navigated with buttons as well.
+
+Staff members (as configured via `staff-role-ids`) can manage a help desk with slash commands in its channel:
+- `/helpdesk init` cleans up the channel and posts the root node again
+- `/helpdesk reload` reloads the model and posts the root node again
+
+Any other messages posted into a help desk channel are deleted after a few seconds,
+so you may want to deny users the permission to send messages there.
+
+A node can have at most 24 branches, as Discord limits the number of buttons per message.
+
 
 ### Dependencies:
 
@@ -144,11 +157,6 @@ And here is how it looks in chat:
   - [Source Code](https://github.com/ben-manes/caffeine)
   - [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt)
   - [Maven Repository](https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine)
-
-- **emoji-java**:
-  - [Source Code](https://github.com/vdurmont/emoji-java)
-  - [MIT License](http://www.opensource.org/licenses/mit-license.php)
-  - [Maven Repository](https://mvnrepository.com/artifact/com.vdurmont/emoji-java)
 
 - **Guava**:
   - [Source Code](https://github.com/google/guava)

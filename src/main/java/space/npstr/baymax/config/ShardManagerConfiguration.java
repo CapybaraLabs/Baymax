@@ -28,7 +28,6 @@ import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
-import space.npstr.baymax.EventWaiter;
 import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 
@@ -59,18 +58,13 @@ public class ShardManagerConfiguration {
 
     @Bean(destroyMethod = "") //we manage the lifecycle ourselves tyvm, see shutdown hook in the launcher
     public ShardManager shardManager(BaymaxConfig baymaxConfig, OkHttpClient.Builder httpClientBuilder,
-                                     ScheduledThreadPoolExecutor jdaThreadPool, EventWaiter eventWaiter,
-                                     HelpDeskListener helpDeskListener) {
+                                     ScheduledThreadPoolExecutor jdaThreadPool, HelpDeskListener helpDeskListener) {
 
         DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
                 .createDefault(baymaxConfig.discordToken())
                 .setChunkingFilter(ChunkingFilter.ALL) //we need to fetch members from the cache at several places
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(
-                        GatewayIntent.GUILD_MEMBERS, //required for chunking
-                        GatewayIntent.MESSAGE_CONTENT // parsing numbers
-                )
-                .addEventListeners(eventWaiter)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS) //required for chunking
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
                         .retryOnConnectionFailure(false))

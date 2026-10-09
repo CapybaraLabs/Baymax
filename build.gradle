@@ -46,7 +46,6 @@ dependencies {
     implementation "io.sentry:sentry-spring-boot-4-starter:$sentryVersion"
     implementation "org.yaml:snakeyaml"
     implementation "com.github.ben-manes.caffeine:caffeine"
-    implementation "com.vdurmont:emoji-java:$emojiVersion"
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "org.xerial:sqlite-jdbc"
     implementation "org.flywaydb:flyway-core"

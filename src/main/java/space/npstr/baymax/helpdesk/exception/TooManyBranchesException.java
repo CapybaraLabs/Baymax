@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Dennis Neufeld
+ * Copyright (C) 2026 Dennis Neufeld
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -15,26 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package space.npstr.baymax;
+package space.npstr.baymax.helpdesk.exception;
 
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
+import space.npstr.baymax.helpdesk.Node;
 
-/**
- * Created by napster on 05.09.18.
- */
-public class Emojis {
+public class TooManyBranchesException extends MalformedModelException {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Emojis.class);
+    private final Node node;
+    private final int maxBranches;
 
-    private Emojis() {}
+    public TooManyBranchesException(Node node, int maxBranches) {
+        super();
+        this.node = node;
+        this.maxBranches = maxBranches;
+    }
 
-    public static String get(String alias) {
-        Emoji emoji = EmojiManager.getForAlias(alias);
-        if (emoji == null) {
-            log.warn("Emoji not found for alias {}, falling back to :thinking:", alias);
-            emoji = EmojiManager.getForAlias("thinking");
-        }
-        return emoji.getUnicode();
+    @Override
+    public String getMessage() {
+        return "Node " + this.node.getId() + " has " + this.node.getBranches().size() + " branches, but at most "
+            + this.maxBranches + " are supported";
     }
 }

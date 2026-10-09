@@ -22,6 +22,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import space.npstr.baymax.helpdesk.exception.MissingTargetNodeException;
 import space.npstr.baymax.helpdesk.exception.NoRootNodeException;
+import space.npstr.baymax.helpdesk.exception.TooManyBranchesException;
 import space.npstr.baymax.helpdesk.exception.UnreferencedNodesException;
 
 import java.util.HashMap;
@@ -32,6 +33,9 @@ import java.util.Map;
  * Created by napster on 05.09.18.
  */
 public class ModelParser {
+
+    // Discord allows 25 buttons per message, and we need one for going back
+    public static final int MAX_BRANCHES = 24;
 
     public Map<String, Node> parse(String yaml) {
         Yaml snakeYaml = new Yaml(new Constructor(NodeModel.class, new LoaderOptions()));
@@ -49,6 +53,7 @@ public class ModelParser {
         //      0) There is a root node
         //      1) Each node referenced by a branch exists
         //      2) All nodes are referenced from the root node
+        //      3) No node has more branches than we can show buttons for
 
         Map<String, Node> allNodes = Map.copyOf(model);
         Map<String, Node> unreferencedNodes = new HashMap<>(model);
@@ -68,6 +73,9 @@ public class ModelParser {
 
     private void traverse(Node node, Map<String, Node> allNodes, Map<String, Node> unreferencedNodes) {
         List<? extends Branch> branches = node.getBranches();
+        if (branches.size() > MAX_BRANCHES) {
+            throw new TooManyBranchesException(node, MAX_BRANCHES);
+        }
 
         Node remove = unreferencedNodes.remove(node.getId());
         if (remove == null) {
