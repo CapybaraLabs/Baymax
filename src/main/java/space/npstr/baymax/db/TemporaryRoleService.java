@@ -19,9 +19,9 @@ package space.npstr.baymax.db;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
@@ -136,14 +136,13 @@ public class TemporaryRoleService {
                             continue;
                         }
                         Role role = guild.getRoleById(roleId);
-                        Member member = guild.getMemberById(userId);
-                        if (role == null || member == null) { //role or member is gone. no point in keeping records on it
+                        if (role == null) { //role is gone. no point in keeping records on it
                             toDelete.add(new TemporaryRoleId(userId, roleId));
                             continue;
                         }
 
-                        log.debug("Removing role {} from member {}", role, member);
-                        this.restActions.removeRole(guild, member, role);
+                        log.debug("Removing role {} from user {}", role, userId);
+                        this.restActions.removeRole(guild, UserSnowflake.fromId(userId), role);
 
                         //remove the row
                         toDelete.add(new TemporaryRoleId(userId, roleId));

@@ -28,9 +28,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.stereotype.Component;
 
@@ -52,9 +55,9 @@ public class RestActions {
         }
     }
 
-    public void removeRole(Guild guild, Member member, Role role) {
+    public void removeRole(Guild guild, UserSnowflake user, Role role) {
         try {
-            guild.removeRoleFromMember(member, role).queue();
+            guild.removeRoleFromMember(user, role).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MEMBER)); // user left the guild
         } catch (InsufficientPermissionException e) {
             log.error("Can't remove role {} due to missing permission {}", role, e.getPermission(), e);
         } catch (HierarchyException e) {
