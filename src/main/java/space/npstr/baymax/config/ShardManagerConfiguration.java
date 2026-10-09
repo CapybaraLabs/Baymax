@@ -18,10 +18,9 @@
 package space.npstr.baymax.config;
 
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,6 @@ import org.springframework.util.ObjectUtils;
 import space.npstr.baymax.HelpDeskListener;
 import space.npstr.baymax.config.properties.BaymaxConfig;
 
-import java.util.EnumSet;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,16 +57,15 @@ public class ShardManagerConfiguration {
                                      ScheduledThreadPoolExecutor jdaThreadPool, HelpDeskListener helpDeskListener) {
 
         DefaultShardManagerBuilder shardBuilder = DefaultShardManagerBuilder
-                .createDefault(baymaxConfig.discordToken())
-                .setMemberCachePolicy(MemberCachePolicy.NONE) //interactions carry the member, everything else works by id
+                // no member or optional caches: interactions carry the member, everything else works by id
+                .createLight(baymaxConfig.discordToken(), GatewayIntent.GUILD_MESSAGES) // cleaning up help desk channels
                 .addEventListeners(helpDeskListener)
                 .setHttpClientBuilder(httpClientBuilder
                         .retryOnConnectionFailure(false))
                 .setEnableShutdownHook(false)
                 .setRateLimitScheduler(jdaThreadPool, false)
                 .setRateLimitElastic(jdaThreadPool, false)
-                .setCallbackPool(jdaThreadPool, false)
-                .disableCache(EnumSet.allOf(CacheFlag.class));
+                .setCallbackPool(jdaThreadPool, false);
 
         String statusMessage = baymaxConfig.statusMessage();
         if (!ObjectUtils.isEmpty(statusMessage)) {
